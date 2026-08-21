@@ -43,6 +43,8 @@ export default function Home() {
   const [view, setView] = useState('globe')
 
   const rotationRef = useRef(rotation)
+  const targetRotationRef = useRef(rotation)
+  const touchRafRef = useRef(null)
   const homeRef = useRef(null)
   const listRef = useRef(null)
   const dragRef = useRef({ active: false, moved: false, pointerId: null, x: 0, y: 0 })
@@ -89,14 +91,23 @@ export default function Home() {
     }
   }, [])
 
-  useEffect(() => { rotationRef.current = rotation }, [rotation])
+  useEffect(() => {
+    rotationRef.current = rotation
+    if (!dragRef.current.active) targetRotationRef.current = rotation
+  }, [rotation])
+
+  useEffect(() => {
+    return () => {
+      if (touchRafRef.current) cancelAnimationFrame(touchRafRef.current)
+    }
+  }, [])
 
   const isMobile = viewport.w < 760
 
   const radius = useMemo(() => {
-    const byHeight = viewport.h * (isMobile ? 0.22 : 0.37)
-    const byWidth = viewport.w * (isMobile ? 0.32 : 0.30)
-    return Math.max(isMobile ? 100 : 220, Math.min(byHeight, byWidth, isMobile ? 165 : 430))
+    const byHeight = viewport.h * (isMobile ? 0.245 : 0.37)
+    const byWidth = viewport.w * (isMobile ? 0.35 : 0.30)
+    return Math.max(isMobile ? 112 : 220, Math.min(byHeight, byWidth, isMobile ? 182 : 430))
   }, [viewport, isMobile])
 
   // Optimization applies ONLY to GLOBE.
@@ -140,9 +151,44 @@ export default function Home() {
     return () => el.removeEventListener('wheel', onWheel)
   }, [view, viewport.h])
 
+  const runSmoothTouchRotation = () => {
+    if (touchRafRef.current) return
+
+    const animate = () => {
+      const current = rotationRef.current
+      const target = targetRotationRef.current
+
+      // Smoothly approach finger position instead of forcing a React render
+      // for every raw touchmove event.
+      const ease = 0.34
+      const next = {
+        x: current.x + (target.x - current.x) * ease,
+        y: current.y + (target.y - current.y) * ease,
+      }
+
+      rotationRef.current = next
+      setRotation(next)
+
+      const distance =
+        Math.abs(target.x - next.x) +
+        Math.abs(target.y - next.y)
+
+      if (distance > 0.00015) {
+        touchRafRef.current = requestAnimationFrame(animate)
+      } else {
+        rotationRef.current = target
+        setRotation(target)
+        touchRafRef.current = null
+      }
+    }
+
+    touchRafRef.current = requestAnimationFrame(animate)
+  }
+
   const startDrag = (event) => {
     if (view !== 'globe' || (event.pointerType === 'mouse' && event.button !== 0)) return
     if (event.target.closest?.('header, footer, [data-menu-overlay]')) return
+    targetRotationRef.current = rotationRef.current
     dragRef.current = { active: true, moved: false, pointerId: event.pointerId, x: event.clientX, y: event.clientY }
   }
 
@@ -156,10 +202,26 @@ export default function Home() {
     }
     if (drag.moved) {
       event.preventDefault()
-      const s = event.pointerType === 'touch' ? 0.0062 : 0.0054
-      const next = { x: rotationRef.current.x - dy * s, y: rotationRef.current.y + dx * s }
-      rotationRef.current = next
-      setRotation(next)
+      if (event.pointerType === 'touch') {
+        // Finger controls a target rotation; RAF interpolates to it smoothly.
+        const s = 0.0058
+        const target = targetRotationRef.current
+        targetRotationRef.current = {
+          x: target.x - dy * s,
+          y: target.y + dx * s,
+        }
+        runSmoothTouchRotation()
+      } else {
+        // Mouse stays immediate and precise.
+        const s = 0.0054
+        const next = {
+          x: rotationRef.current.x - dy * s,
+          y: rotationRef.current.y + dx * s,
+        }
+        rotationRef.current = next
+        targetRotationRef.current = next
+        setRotation(next)
+      }
     }
     drag.x = event.clientX; drag.y = event.clientY
   }
