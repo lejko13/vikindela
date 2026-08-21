@@ -5,12 +5,13 @@ import { projects } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 import { contactData } from '../data/siteContent'
 
-const DISPLAY_COUNT = 30
+const DESKTOP_DISPLAY_COUNT = 30
+const MOBILE_DISPLAY_COUNT = 20
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 
-function makeSphereNodes(radius) {
-  return Array.from({ length: DISPLAY_COUNT }, (_, i) => {
-    const y = 1 - (i / (DISPLAY_COUNT - 1)) * 2
+function makeSphereNodes(radius, count) {
+  return Array.from({ length: count }, (_, i) => {
+    const y = 1 - (i / Math.max(1, count - 1)) * 2
     const ring = Math.sqrt(Math.max(0, 1 - y * y))
     const angle = GOLDEN_ANGLE * i
     const project = projects[i % projects.length]
@@ -90,23 +91,30 @@ export default function Home() {
 
   useEffect(() => { rotationRef.current = rotation }, [rotation])
 
-  const radius = useMemo(() => {
-    const mobile = viewport.w < 760
-    const byHeight = viewport.h * (mobile ? 0.28 : 0.37)
-    const byWidth = viewport.w * (mobile ? 0.43 : 0.30)
-    return Math.max(mobile ? 128 : 220, Math.min(byHeight, byWidth, mobile ? 215 : 430))
-  }, [viewport])
+  const isMobile = viewport.w < 760
 
-  const nodes = useMemo(() => makeSphereNodes(radius), [radius])
+  const radius = useMemo(() => {
+    const byHeight = viewport.h * (isMobile ? 0.22 : 0.37)
+    const byWidth = viewport.w * (isMobile ? 0.32 : 0.30)
+    return Math.max(isMobile ? 100 : 220, Math.min(byHeight, byWidth, isMobile ? 165 : 430))
+  }, [viewport, isMobile])
+
+  // Optimization applies ONLY to GLOBE.
+  // Desktop keeps 30 visual nodes, phones render only 10.
+  // LIST below still maps the complete `projects` array unchanged.
+  const globeDisplayCount = isMobile ? MOBILE_DISPLAY_COUNT : DESKTOP_DISPLAY_COUNT
+  const nodes = useMemo(
+    () => makeSphereNodes(radius, globeDisplayCount),
+    [radius, globeDisplayCount]
+  )
   const visualNodes = useMemo(() => nodes.map((node) => {
     const p = rotatePoint(node.base, rotation.x, rotation.y)
     const depth = (p.z + radius) / (radius * 2)
     const perspective = 0.76 + depth * 0.5
-    const mobile = viewport.w < 760
-    const baseWidth = mobile ? Math.max(42, Math.min(viewport.w * 0.135, 70)) : Math.max(70, Math.min(viewport.w * 0.068, 126))
+    const baseWidth = isMobile ? Math.max(44, Math.min(viewport.w * 0.145, 68)) : Math.max(70, Math.min(viewport.w * 0.068, 126))
     const width = baseWidth * node.size * perspective
     return { ...node, p, depth, opacity: 0.10 + depth * 0.90, width, height: width / node.ratio }
-  }).sort((a,b) => a.p.z - b.p.z), [nodes, rotation, radius, viewport.w])
+  }).sort((a,b) => a.p.z - b.p.z), [nodes, rotation, radius, viewport.w, isMobile])
 
   const rotateFromWheel = (event) => {
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.h : 1
@@ -148,7 +156,7 @@ export default function Home() {
     }
     if (drag.moved) {
       event.preventDefault()
-      const s = event.pointerType === 'touch' ? 0.0072 : 0.0054
+      const s = event.pointerType === 'touch' ? 0.0062 : 0.0054
       const next = { x: rotationRef.current.x - dy * s, y: rotationRef.current.y + dx * s }
       rotationRef.current = next
       setRotation(next)
