@@ -67,7 +67,7 @@ export default function SiteHeader() {
           to="/"
           onClick={() => setOpen(false)}
           aria-label="VIKINDELA"
-          className="-my-[12px] block shrink-0 transition-opacity hover:opacity-70 md:-my-[clamp(17px,1.375vw,21px)]"
+          className="-mt-[7px] -mb-[17px] block shrink-0 transition-opacity hover:opacity-70 md:-mt-[10px] md:-mb-[clamp(25px,calc(2.75vw-10px),43px)]"
         >
           <SiteLogo />
         </Link>

@@ -6,6 +6,7 @@ import { contactData } from '../data/siteContent'
 export default function Contact() {
   const { t } = useLanguage()
   const [message, setMessage] = useState('')
+  const [emailLocal, emailDomain] = contactData.email.toUpperCase().split('@')
 
   const sendMessage = (e) => {
     e.preventDefault()
@@ -22,10 +23,10 @@ export default function Contact() {
         <h1 className="m-0 max-w-[1200px] text-[clamp(58px,18vw,92px)] font-black leading-[.72] tracking-[-.08em] md:text-[clamp(72px,12vw,210px)]">{t.contactTitle}</h1>
       </section>
 
-      <section className={`mt-[90px] grid grid-cols-1 gap-[34px] pt-[18px] md:mt-auto md:gap-8 md:pt-20 ${contactData.showEmail ? 'md:grid-cols-[minmax(260px,1.3fr)_repeat(3,minmax(140px,.7fr))]' : 'md:grid-cols-[minmax(260px,1.3fr)_repeat(2,minmax(140px,.7fr))]'}`}>
-        <a href={`tel:${contactData.phoneHref}`} className="text-[clamp(34px,10vw,52px)] font-black leading-[.86] tracking-[-.055em] transition-colors hover:text-pink md:text-[clamp(28px,4vw,70px)] md:whitespace-nowrap">{contactData.phoneDisplay}</a>
-        {contactData.showEmail && <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.emailLabel}</span><a href={`mailto:${contactData.email}`} className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.email.toUpperCase()}</a></div>}
-        <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.phoneLabel}</span><a href={`tel:${contactData.phoneHref}`} className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.phoneDisplay}</a></div>
+      <section className="mt-[90px] grid grid-cols-1 gap-[34px] pt-[18px] md:mt-auto md:grid-cols-[minmax(260px,1.3fr)_repeat(2,minmax(140px,.7fr))] md:gap-8 md:pt-20">
+        {/* Na mobile sa e-mail zalomí za zavináčom (nie uprostred slova) */}
+        <a href={`mailto:${contactData.email}`} className="text-[clamp(26px,8vw,52px)] font-black leading-[.86] tracking-[-.055em] transition-colors hover:text-pink md:text-[clamp(24px,2.7vw,52px)] md:whitespace-nowrap">{emailLocal}@<wbr />{emailDomain}</a>
+        <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.emailLabel}</span><a href={`mailto:${contactData.email}`} className="break-all text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.email.toUpperCase()}</a></div>
         <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.instagramLabel}</span><a href={contactData.instagramHref} target="_blank" rel="noreferrer" className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.instagramLabel.toUpperCase()}</a></div>
       </section>
 

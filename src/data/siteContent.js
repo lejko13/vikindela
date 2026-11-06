@@ -5,7 +5,7 @@ export const siteContent = {
     menu: 'MENU', close: 'CLOSE', home: 'HOME', all: 'ALL', contact: 'CONTACT',
     globe: 'GLOBE', list: 'LIST', selectedWork: 'SELECTED WORK', allProjects: 'ALL PROJECTS',
     contactTitle: 'GET IN TOUCH', messageLabel: 'MESSAGE', messagePlaceholder: 'WRITE YOUR MESSAGE…',
-    sendMessage: 'SEND', phoneLabel: 'PHONE', instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL',
+    sendMessage: 'SEND', instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL',
     nextProject: 'NEXT PROJECT', client: 'CLIENT', year: 'YEAR', type: 'TYPE', role: 'ROLE', location: 'LOCATION',
     detail: 'DETAIL', campaign: 'CAMPAIGN', loading: 'LOADING', clickHere: 'CLICK HERE', cookiesTitle: 'COOKIES',
     cookiesText: 'We use necessary cookies to remember your language and site preferences. Optional cookies can be enabled later.',
@@ -15,7 +15,7 @@ export const siteContent = {
     introLine1: 'MÓDNY DIZAJNÉR', introLine2: 'A KREATÍVNY RIADITEĽ', menu: 'MENU', close: 'ZAVRIEŤ',
     home: 'DOMOV', all: 'VŠETKO', contact: 'KONTAKT', globe: 'GLOBUS', list: 'ZOZNAM',
     selectedWork: 'VYBRANÉ PRÁCE', allProjects: 'VŠETKY PROJEKTY', contactTitle: 'NAPÍŠ MI',
-    messageLabel: 'SPRÁVA', messagePlaceholder: 'NAPÍŠ SPRÁVU…', sendMessage: 'ODOSLAŤ', phoneLabel: 'TELEFÓN',
+    messageLabel: 'SPRÁVA', messagePlaceholder: 'NAPÍŠ SPRÁVU…', sendMessage: 'ODOSLAŤ',
     instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL', nextProject: 'ĎALŠÍ PROJEKT', client: 'KLIENT', year: 'ROK',
     type: 'TYP', role: 'ROLA', location: 'LOKALITA', detail: 'DETAIL', campaign: 'KAMPAŇ', loading: 'NAČÍTAVANIE', clickHere: 'KLIKNI SEM',
     cookiesTitle: 'COOKIES', cookiesText: 'Používame nevyhnutné cookies na zapamätanie jazyka a nastavení webu. Voliteľné cookies môžeš povoliť neskôr.',
@@ -24,11 +24,8 @@ export const siteContent = {
 }
 
 export const contactData = {
-  // Na sem chodí správa z formulára. Na stránke sa zatiaľ nezobrazuje (showEmail) – zapni, keď bude schránka hotová.
-  email: 'hello@vikindela.com',
-  showEmail: false,
-  phoneDisplay: '+421 918 855 513',
-  phoneHref: '+421918855513',
+  // Zobrazuje sa na stránke kontakt a na tento e-mail chodí aj správa z formulára
+  email: 'viky.kubincova@gmail.com',
   instagramLabel: '@vikindela_',
   instagramHref: 'https://www.instagram.com/vikindela_/',
 }
