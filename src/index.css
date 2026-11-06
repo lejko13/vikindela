@@ -98,8 +98,8 @@ textarea:focus, textarea:focus-visible { outline: none; }
 .folder__front {
   position: absolute; left: 0; right: 0; top: 19%; bottom: 0;
   border-radius: 5% / 7%;
-  background: linear-gradient(180deg, #92d0f6 0%, #6fb5e8 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 -1px 2px rgba(0, 40, 90, .16);
+  background: linear-gradient(180deg, #89cdf3 0%, #75bce7 50%, #65addd 100%);
+  box-shadow: inset 0 1px 0 #9cd6f5, 0 -1px 2px rgba(0, 40, 90, .16);
 }
 /* Fotka na prednej strane priečinka */
 .folder__photo {
