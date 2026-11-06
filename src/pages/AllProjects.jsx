@@ -27,7 +27,7 @@ export default function AllProjects() {
         {projectCategories.map((category, sectionIndex) => {
           const items = projects.filter(p => p.group === category.id).map(raw => ({ raw, project: localized(raw, language) }))
           return (
-            <section key={category.id} id={category.id} style={{ color: category.color }} className="scroll-mt-[58px] px-[14px] py-6 last:min-h-[calc(100svh-58px)] md:scroll-mt-[76px] md:min-h-[420px] md:last:min-h-[calc(100svh-76px)] md:px-6 md:pt-[34px] md:pb-12">
+            <section key={category.id} id={category.id} style={{ color: category.color }} className="scroll-mt-[63px] px-[14px] py-6 last:min-h-[calc(100svh-63px)] md:scroll-mt-[clamp(79px,calc(4.97vw+24px),113px)] md:min-h-[420px] md:last:min-h-[calc(100svh-clamp(79px,calc(4.97vw+24px),113px))] md:px-6 md:pt-[34px] md:pb-12">
               <div className="mb-5 flex items-start justify-between gap-6 md:mb-[30px]">
                 <div className="flex items-start gap-2.5 md:gap-[18px]">
                   <span className="text-[8px] font-black md:text-[10px]">{String(sectionIndex+1).padStart(2,'0')}</span>

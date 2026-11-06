@@ -60,14 +60,14 @@ export default function SiteHeader() {
         className={`fixed z-[13000] flex items-start justify-between leading-none text-pink-strong ${
           isHome
             ? `top-[15px] left-[14px] right-[14px] md:top-[22px] md:left-[24px] md:right-[24px] ${open ? 'bg-transparent' : 'bg-transparent'}`
-            : 'top-0 left-0 right-0 min-h-[58px] bg-paper px-[14px] pt-[15px] pb-3 md:min-h-[76px] md:px-6 md:pt-[22px] md:pb-[18px]'
+            : 'top-0 left-0 right-0 bg-paper px-[14px] pt-[15px] pb-3 md:px-6 md:pt-[22px] md:pb-[18px]'
         }`}
       >
         <Link
           to="/"
           onClick={() => setOpen(false)}
           aria-label="VIKINDELA"
-          className="-mt-[7px] -mb-[17px] block shrink-0 transition-opacity hover:opacity-70 md:-mt-[10px] md:-mb-[clamp(25px,calc(2.75vw-10px),43px)]"
+          className="-mt-[7px] -mb-[4px] block shrink-0 transition-opacity hover:opacity-70 md:-mt-[10px] md:-mb-[6px]"
         >
           <SiteLogo />
         </Link>

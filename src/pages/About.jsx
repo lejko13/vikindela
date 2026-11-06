@@ -19,7 +19,7 @@ export default function About() {
 
       <div className="mt-14 grid grid-cols-1 gap-12 md:mt-24 md:grid-cols-[minmax(0,1fr)_minmax(240px,28vw)] md:gap-16">
         <div className="min-w-0">
-          <p className="m-0 max-w-[1000px] text-[clamp(20px,5.6vw,32px)] font-black uppercase leading-[.95] tracking-[-.05em] text-ink md:text-[clamp(20px,2.2vw,40px)]">{about.bio}</p>
+          <p className="m-0 max-w-[1000px] text-[clamp(17px,4.6vw,26px)] font-black uppercase leading-[.95] tracking-[-.05em] text-ink md:text-[clamp(17px,1.65vw,30px)]">{about.bio}</p>
 
           <dl className="mt-12 grid grid-cols-1 gap-8 md:mt-20 md:grid-cols-2 md:gap-x-10 md:gap-y-12 xl:grid-cols-4">
             {/* Zameranie = kategórie webu vo svojich farbách, každá vedie na svoju sekciu v ALL */}
