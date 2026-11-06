@@ -22,7 +22,7 @@ const DRAG_ARENA_SCALE = 1.4
 // Prst pri ťahaní: guľa sa k nemu plynulo dotiahne (čím viac, tým rýchlejšie)
 const TOUCH_FOLLOW = 0.34
 // Priečinok je širší než vyšší (ako ikona priečinka na Macu)
-const FOLDER_RATIO = 1.15
+const FOLDER_RATIO = 1.25
 // Po kliknutí sa priečinok najprv otvorí, až potom sa prejde na kategóriu
 const FOLDER_OPEN_MS = 320
 
@@ -373,7 +373,7 @@ export default function Home({ introDelay = 0 }) {
                   onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
                   className="group absolute left-0 top-0 cursor-pointer will-change-transform"
                   style={{ width, height: width / FOLDER_RATIO, opacity: 0 }}>
-                  <FolderCard image={project.image} tone={category?.tone} open={openFolder === node.key} label={project.title} />
+                  <FolderCard image={project.image} open={openFolder === node.key} label={project.title} />
                   {/* Popisok pod priečinkom: kategória + názov projektu */}
                   <span ref={(el) => { captionElsRef.current[i] = el }}
                     className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em]"
