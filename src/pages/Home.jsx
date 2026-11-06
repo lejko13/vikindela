@@ -348,7 +348,7 @@ export default function Home({ introDelay = 0 }) {
       onPointerLeave={(e) => dragRef.current.active && e.buttons === 0 && endDrag(e)}>
 
       <div className={`absolute inset-0 z-[20000] flex flex-col justify-between bg-paper px-[14px] pt-[15px] pb-[14px] transition-all duration-700 md:px-6 md:pt-[22px] md:pb-5 ${loading ? 'translate-y-0 opacity-100 visible' : '-translate-y-full opacity-0 invisible pointer-events-none'}`}>
-        <div className="-my-[9px] md:-my-[clamp(14px,1.05vw,17px)]"><SiteLogo /></div>
+        <div className="-my-[12px] md:-my-[clamp(17px,1.375vw,21px)]"><SiteLogo /></div>
         <div className="flex items-end justify-between text-[13px] font-black tracking-[-.04em] md:text-[clamp(13px,1.2vw,18px)]"><span>{t.loading}</span><span>{String(loadingProgress).padStart(2,'0')}</span></div>
       </div>
 
