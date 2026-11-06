@@ -5,7 +5,7 @@ export default function SiteLogo({ className = '' }) {
       src="/vikindela-logo.png"
       alt="VIKINDELA"
       draggable="false"
-      className={`logo-lift block h-[34px] w-auto select-none md:h-[clamp(40px,3.6vw,64px)] ${className}`}
+      className={`logo-lift block h-[41px] w-auto select-none md:h-[clamp(48px,4.32vw,77px)] ${className}`}
     />
   )
 }

@@ -9,6 +9,10 @@ import { localized, useLanguage } from '../context/LanguageContext'
 const DESKTOP_DISPLAY_COUNT = 30
 const MOBILE_DISPLAY_COUNT = 20
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
+// Guľa sa sama pomaly otáča sprava doľava (radiány za sekundu). Pri ťahaní, scrollovaní
+// alebo keď je myš na kartičke zastane a po chvíli sa plynulo rozbehne znova.
+const AUTO_ROTATE_SPEED = 0.1
+const AUTO_ROTATE_RESUME_MS = 1400
 
 // Guľa je rozdelená na 4 pásy (zhora nadol) — jeden pás = jedna kategória.
 // Klik na ktorýkoľvek obrázok v páse ťa hodí na danú kategóriu na stránke ALL.
@@ -78,6 +82,8 @@ export default function Home({ introDelay = 0 }) {
   const listRef = useRef(null)
   const dragRef = useRef({ active: false, moved: false, pointerId: null, x: 0, y: 0 })
   const suppressClickRef = useRef(false)
+  const lastInteractionRef = useRef(0)
+  const hoveringCardRef = useRef(false)
 
   useEffect(() => {
     setLoading(true)
@@ -136,6 +142,33 @@ export default function Home({ introDelay = 0 }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (loading || view !== 'globe') return
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf
+    let last = performance.now()
+    let speed = 0
+    const tick = (now) => {
+      const dt = Math.min(50, now - last)
+      last = now
+      if (dragRef.current.active || touchRafRef.current) {
+        speed = 0
+      } else {
+        const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
+        speed += ((idle ? AUTO_ROTATE_SPEED : 0) - speed) * Math.min(1, dt / 700)
+        if (speed > 0.0005) {
+          const next = { x: rotationRef.current.x, y: rotationRef.current.y - (speed * dt) / 1000 }
+          rotationRef.current = next
+          targetRotationRef.current = next
+          setRotation(next)
+        }
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [loading, view])
+
   const isMobile = viewport.w < 760
 
   const radius = useMemo(() => {
@@ -162,6 +195,7 @@ export default function Home({ introDelay = 0 }) {
   }).sort((a,b) => a.p.z - b.p.z), [nodes, rotation, radius, viewport.w, isMobile])
 
   const rotateFromWheel = (event) => {
+    lastInteractionRef.current = performance.now()
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.h : 1
     const next = {
       x: rotationRef.current.x - event.deltaY * unit * 0.00235,
@@ -263,6 +297,7 @@ export default function Home({ introDelay = 0 }) {
   const endDrag = (event) => {
     const drag = dragRef.current
     if (!drag.active || drag.pointerId !== event.pointerId) return
+    lastInteractionRef.current = performance.now()
     if (drag.moved) {
       suppressClickRef.current = true
       setTimeout(() => { suppressClickRef.current = false }, 0)
@@ -281,7 +316,7 @@ export default function Home({ introDelay = 0 }) {
       onPointerLeave={(e) => dragRef.current.active && e.buttons === 0 && endDrag(e)}>
 
       <div className={`absolute inset-0 z-[20000] flex flex-col justify-between bg-paper px-[14px] pt-[15px] pb-[14px] transition-all duration-700 md:px-6 md:pt-[22px] md:pb-5 ${loading ? 'translate-y-0 opacity-100 visible' : '-translate-y-full opacity-0 invisible pointer-events-none'}`}>
-        <div className="-my-[6px] md:-my-[10px]"><SiteLogo /></div>
+        <div className="-my-[9px] md:-my-[clamp(14px,1.05vw,17px)]"><SiteLogo /></div>
         <div className="flex items-end justify-between text-[13px] font-black tracking-[-.04em] md:text-[clamp(13px,1.2vw,18px)]"><span>{t.loading}</span><span>{String(loadingProgress).padStart(2,'0')}</span></div>
       </div>
 
@@ -298,6 +333,8 @@ export default function Home({ introDelay = 0 }) {
               const category = categoryById[project.group]
               return (
                 <Link key={node.key} to={destinationForIndex(node.index, nodes.length)} onClick={openProject}
+                  onMouseEnter={() => { hoveringCardRef.current = true }}
+                  onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
                   className="group absolute left-0 top-0 cursor-pointer"
                   style={{ width: node.width, height: node.height, opacity: node.opacity, zIndex: Math.round(node.depth * 1000), transform: `translate3d(${node.p.x}px,${node.p.y}px,0) translate(-50%,-50%)` }}>
                   <div className="pink-hover relative h-full w-full overflow-hidden bg-[#e9e9e6]">
@@ -305,10 +342,10 @@ export default function Home({ introDelay = 0 }) {
                   </div>
                   {/* Popisok pod kartičkou: kategória + názov projektu. Zadné (vyblednuté) kartičky ho nemajú, aby guľa nebola preplnená. */}
                   {node.depth > 0.45 && (
-                    <span className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em] text-pink-strong"
-                      style={{ fontSize: Math.max(9, Math.min(13, node.width * 0.095)) }}>
+                    <span className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em]"
+                      style={{ fontSize: Math.max(9, Math.min(13, node.width * 0.095)), color: category?.color }}>
                       <span className="block whitespace-nowrap">{category?.label[language] || category?.label.en}</span>
-                      <span className="block whitespace-nowrap text-pink-strong/65">{project.placeholder ? t.comingSoon : project.title}</span>
+                      <span className="block whitespace-nowrap opacity-65">{project.placeholder ? t.comingSoon : project.title}</span>
                     </span>
                   )}
                 </Link>
@@ -321,7 +358,7 @@ export default function Home({ introDelay = 0 }) {
               {[...projects, ...projects].map((project, index) => (
                 <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`} className="pink-hover group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
                   <ProjectImage project={project} alt={localized(project, language).title} className="h-full w-full transition group-hover:scale-[1.035]" imgClassName="object-cover" />
-                  <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase text-pink opacity-0 transition-opacity group-hover:opacity-100">{localized(project, language).title}</span>
+                  <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase opacity-0 transition-opacity group-hover:opacity-100" style={{ color: categoryById[project.group]?.color }}>{localized(project, language).title}</span>
                 </Link>
               ))}
             </div>

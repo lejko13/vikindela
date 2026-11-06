@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
-import { projects } from '../data/projects'
+import { categoryById, projects } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 
 export default function ProjectDetail() {
@@ -16,9 +16,11 @@ export default function ProjectDetail() {
   const rawNext = projects[(currentIndex + 1) % projects.length]
   const nextProject = localized(rawNext, language)
   const [videoW, videoH] = project.videoSize || [16, 9]
+  // Celý detail je vo farbe kategórie projektu (hlavička s logom a menu ostáva ružová)
+  const categoryColor = categoryById[project.group]?.color
 
   return (
-    <main className="min-h-screen bg-paper px-3 pt-[92px] pb-10 text-pink-strong md:grid md:grid-cols-[minmax(270px,30vw)_minmax(0,1fr)] md:gap-[42px] md:px-6 md:pt-28 md:pb-[70px]">
+    <main style={{ color: categoryColor }} className="min-h-screen bg-paper px-3 pt-[92px] pb-10 text-pink-strong md:grid md:grid-cols-[minmax(270px,30vw)_minmax(0,1fr)] md:gap-[42px] md:px-6 md:pt-28 md:pb-[70px]">
       <SiteHeader />
 
       <aside className="mb-9 w-full text-[14px] font-black md:sticky md:top-28 md:mb-0 md:max-w-[440px] md:self-start md:text-[9px]">
@@ -72,7 +74,7 @@ export default function ProjectDetail() {
             <figcaption className="pt-[6px] pb-3 text-[10px] font-black uppercase md:pt-[5px] md:pb-0 md:text-[8px]">0{index+1} / {index===0?project.title:index===1?t.detail:t.campaign}</figcaption>
           </figure>
         ))}
-        <Link to={`/work/${rawNext.slug}`} className="mt-[34px] flex items-end justify-between gap-5 pt-7 uppercase transition-colors hover:text-pink md:mt-11 md:pt-[42px]">
+        <Link to={`/work/${rawNext.slug}`} style={{ color: categoryById[rawNext.group]?.color }} className="mt-[34px] flex items-end justify-between gap-5 pt-7 uppercase transition-opacity hover:opacity-60 md:mt-11 md:pt-[42px]">
           <span className="text-[10px] font-black">{t.nextProject}</span><strong className="text-right text-[clamp(26px,4vw,68px)] font-black leading-[.85] tracking-[-.065em]">{nextProject.title}</strong>
         </Link>
       </section>

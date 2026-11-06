@@ -1,10 +1,11 @@
 // 4 kategórie webu. Poradie = poradie pásov na guli (zhora nadol) aj sekcií na stránke ALL.
 // `tone` je odtieň šedej pre placeholdery danej kategórie.
+// `color` je farba textov kategórie (popisky na guli, nadpis na ALL, detail projektu).
 export const projectCategories = [
-  { id: 'art-directing', label: { en: 'ART DIRECTING', sk: 'ART DIRECTING' }, tone: '#e6e6e2' },
-  { id: 'styling', label: { en: 'STYLING', sk: 'STYLING' }, tone: '#d9d9d4' },
-  { id: 'fashion-design', label: { en: 'FASHION DESIGN', sk: 'MÓDNY DIZAJN' }, tone: '#cbcbc5' },
-  { id: 'social-media', label: { en: 'SOCIAL MEDIA', sk: 'SOCIÁLNE SIETE' }, tone: '#bdbdb6' },
+  { id: 'art-directing', label: { en: 'ART DIRECTING', sk: 'ART DIRECTING' }, tone: '#e6e6e2', color: '#f2b800' },
+  { id: 'styling', label: { en: 'STYLING', sk: 'STYLING' }, tone: '#d9d9d4', color: '#050505' },
+  { id: 'fashion-design', label: { en: 'FASHION DESIGN', sk: 'MÓDNY DIZAJN' }, tone: '#cbcbc5', color: '#2f5bff' },
+  { id: 'social-media', label: { en: 'SOCIAL MEDIA', sk: 'SOCIÁLNE SIETE' }, tone: '#bdbdb6', color: '#e84cdb' },
 ]
 
 export const categoryById = Object.fromEntries(projectCategories.map((c) => [c.id, c]))

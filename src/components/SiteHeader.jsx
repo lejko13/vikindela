@@ -57,7 +57,7 @@ export default function SiteHeader() {
     <>
       {/* One persistent header is used in both states. Nothing is re-mounted or repositioned. */}
       <header
-        className={`fixed z-[13000] flex items-start justify-between leading-none ${
+        className={`fixed z-[13000] flex items-start justify-between leading-none text-pink-strong ${
           isHome
             ? `top-[15px] left-[14px] right-[14px] md:top-[22px] md:left-[24px] md:right-[24px] ${open ? 'bg-transparent' : 'bg-transparent'}`
             : 'top-0 left-0 right-0 min-h-[58px] bg-paper px-[14px] pt-[15px] pb-3 md:min-h-[76px] md:px-6 md:pt-[22px] md:pb-[18px]'
@@ -67,7 +67,7 @@ export default function SiteHeader() {
           to="/"
           onClick={() => setOpen(false)}
           aria-label="VIKINDELA"
-          className="-my-[6px] block shrink-0 transition-opacity hover:opacity-70 md:-my-[10px]"
+          className="-my-[9px] block shrink-0 transition-opacity hover:opacity-70 md:-my-[clamp(14px,1.05vw,17px)]"
         >
           <SiteLogo />
         </Link>
@@ -89,7 +89,7 @@ export default function SiteHeader() {
       <div
         id="site-menu"
         data-menu-overlay
-        className={`fixed inset-0 z-[12000] bg-paper transition-opacity duration-200 ${
+        className={`fixed inset-0 z-[12000] bg-paper text-pink-strong transition-opacity duration-200 ${
           open
             ? 'visible pointer-events-auto opacity-100'
             : 'invisible pointer-events-none opacity-0'

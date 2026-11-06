@@ -27,7 +27,7 @@ export default function AllProjects() {
         {projectCategories.map((category, sectionIndex) => {
           const items = projects.filter(p => p.group === category.id).map(raw => ({ raw, project: localized(raw, language) }))
           return (
-            <section key={category.id} id={category.id} className="scroll-mt-[58px] px-[14px] py-6 last:min-h-[calc(100svh-58px)] md:scroll-mt-[76px] md:min-h-[420px] md:last:min-h-[calc(100svh-76px)] md:px-6 md:pt-[34px] md:pb-12">
+            <section key={category.id} id={category.id} style={{ color: category.color }} className="scroll-mt-[58px] px-[14px] py-6 last:min-h-[calc(100svh-58px)] md:scroll-mt-[76px] md:min-h-[420px] md:last:min-h-[calc(100svh-76px)] md:px-6 md:pt-[34px] md:pb-12">
               <div className="mb-5 flex items-start justify-between gap-6 md:mb-[30px]">
                 <div className="flex items-start gap-2.5 md:gap-[18px]">
                   <span className="text-[8px] font-black md:text-[10px]">{String(sectionIndex+1).padStart(2,'0')}</span>
@@ -42,9 +42,9 @@ export default function AllProjects() {
                     <div className="pink-hover relative aspect-[4/5] overflow-hidden bg-[#eee]">
                       <ProjectImage project={project} alt={project.title} className="h-full w-full transition duration-200 group-hover:scale-[1.035]" imgClassName="object-cover" />
                     </div>
-                    <div className="grid grid-cols-[20px_minmax(0,1fr)_30px] items-baseline gap-x-1 gap-y-[3px] pt-2.5 transition-colors group-hover:text-pink text-[8px] font-black uppercase md:grid-cols-[28px_minmax(0,1fr)_40px] md:gap-x-[7px] md:text-[10px]">
+                    <div className="grid grid-cols-[20px_minmax(0,1fr)_30px] items-baseline gap-x-1 gap-y-[3px] pt-2.5 transition-opacity group-hover:opacity-60 text-[8px] font-black uppercase md:grid-cols-[28px_minmax(0,1fr)_40px] md:gap-x-[7px] md:text-[10px]">
                       <span>{String(index+1).padStart(2,'0')}</span><strong className="truncate text-[10px] md:text-[13px]">{project.title}</strong><span className="text-right">{project.year}</span>
-                      <span className="col-span-2 col-start-2 truncate text-pink-strong/65 group-hover:text-pink">{projectCaption(project, t)}</span>
+                      <span className="col-span-2 col-start-2 truncate opacity-65">{projectCaption(project, t)}</span>
                     </div>
                   </Link>
                 ))}
