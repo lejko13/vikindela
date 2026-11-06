@@ -40,19 +40,9 @@
 /* Na šírku: video cez celú obrazovku, stmavené rovnako ako predtým fotka (pozadie ostáva, kým sa video nenačíta) */
 .entry-gate__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); }
 
-/* Na výšku: tri zábery pod sebou namiesto videa na šírku. Logo s tlačidlom sedia na strednom zábere (oči). */
-.entry-gate__stack { display: none; }
+/* Na výšku: video natočené na výšku (pozadie .entry-gate sa nepoužije, je na šírku) */
 @media (orientation: portrait) {
-  .entry-gate { background-image: none; padding-top: 20vh; }
-  .entry-gate__stack {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-rows: 40fr 33fr 27fr;
-    gap: 6px;
-    background: var(--color-ink);
-  }
-  .entry-gate__stack video { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; filter: brightness(.72); }
+  .entry-gate { background-image: none; }
   .entry-gate__logo { width: min(86vw, 620px); }
 }
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 
-// Na výšku (mobil, tablet) sa video na šírku nezmestí – namiesto neho tri výrezy z neho pod sebou.
-// Prepína sa v JS, aby mobil nesťahoval veľké video a počítač malé výrezy.
+// Na výšku (mobil, tablet) sa video na šírku nezmestí – ukáže sa verzia natočená na výšku.
+// Prepína sa v JS, aby si každé zariadenie stiahlo len jedno video.
 const PORTRAIT_QUERY = '(orientation: portrait)'
 
 function useMatchMedia(query) {
@@ -35,15 +35,11 @@ export default function EntryGate({ onEnter, leaving = false }) {
       className={`entry-gate fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-8 px-6 text-center text-pink-strong ${leaving ? 'is-leaving pointer-events-none' : ''}`}
       aria-hidden={leaving}
     >
-      {/* Na šírku celé video, na výšku tri výrezy pod sebou: tablet, oči z notebooku, mobil */}
+      {/* Na šírku video na šírku, na výšku (mobil, tablet) to isté video natočené na výšku */}
       {portrait ? (
-        <div className="entry-gate__stack" aria-hidden="true">
-          <LoopVideo src="/entry-tablet.mp4" poster="/entry-tablet.jpg" play={play} />
-          <LoopVideo src="/entry-eyes.mp4" poster="/entry-eyes.jpg" play={play} />
-          <LoopVideo src="/entry-phone.mp4" poster="/entry-phone.jpg" play={play} />
-        </div>
+        <LoopVideo key="portrait" src="/entry-portrait.mp4" poster="/entry-portrait.jpg" play={play} className="entry-gate__video" />
       ) : (
-        <LoopVideo src="/entry-video.mp4" poster="/entry-photo.jpg" play={play} className="entry-gate__video" />
+        <LoopVideo key="landscape" src="/entry-video.mp4" poster="/entry-photo.jpg" play={play} className="entry-gate__video" />
       )}
       <img
         src="/vikindela-logo.png"
