@@ -34,7 +34,7 @@ export const contactData = {
 // `photo` – portrét (napr. '/about-portrait.jpg' v /public); kým je null, ukáže sa šedý rámik.
 // `sections` – bloky pod textom (štúdium, skúsenosti…); každý má nadpis a riadky. Blok môžeš pridať aj zmazať.
 export const aboutData = {
-  photo: null,
+  photo: '/about-portrait.jpg',
   en: {
     name: 'VIKTÓRIA KUBINCOVÁ',
     bio: 'A SHORT TEXT ABOUT ME IS COMING SOON – WHO I AM, WHAT I DO AND WHAT DRIVES MY WORK.',
