@@ -68,6 +68,8 @@ function makeSphereNodes(radius, count) {
       project,
       base: { x: Math.cos(angle) * ring * radius, y: y * radius, z: Math.sin(angle) * ring * radius },
       size: [0.72, 0.96, 1.18, 0.84, 1.08, 0.9][i % 6],
+      // 30 % priečinkov je žltých pixelových (3 z každých 10, rozhádzané po guli)
+      variant: (i * 7) % 10 < 3 ? 'pixel' : 'mac',
     }
   })
 }
@@ -373,7 +375,7 @@ export default function Home({ introDelay = 0 }) {
                   onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
                   className="group absolute left-0 top-0 cursor-pointer will-change-transform"
                   style={{ width, height: width / FOLDER_RATIO, opacity: 0 }}>
-                  <FolderCard image={project.image} open={openFolder === node.key} label={project.title} />
+                  <FolderCard image={project.image} open={openFolder === node.key} label={project.title} variant={node.variant} />
                   {/* Popisok pod priečinkom: kategória + názov projektu */}
                   <span ref={(el) => { captionElsRef.current[i] = el }}
                     className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em]"
