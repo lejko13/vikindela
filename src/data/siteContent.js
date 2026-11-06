@@ -2,7 +2,7 @@ export const siteContent = {
   en: {
     introLine1: 'FASHION DESIGNER',
     introLine2: 'AND CREATIVE DIRECTOR',
-    menu: 'MENU', close: 'CLOSE', home: 'HOME', all: 'ALL', contact: 'CONTACT',
+    menu: 'MENU', close: 'CLOSE', home: 'HOME', all: 'ALL', about: 'ABOUT', contact: 'CONTACT',
     globe: 'GLOBE', list: 'LIST', selectedWork: 'SELECTED WORK', allProjects: 'ALL PROJECTS',
     contactTitle: 'GET IN TOUCH', messageLabel: 'MESSAGE', messagePlaceholder: 'WRITE YOUR MESSAGE…',
     sendMessage: 'SEND', instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL',
@@ -13,7 +13,7 @@ export const siteContent = {
   },
   sk: {
     introLine1: 'MÓDNY DIZAJNÉR', introLine2: 'A KREATÍVNY RIADITEĽ', menu: 'MENU', close: 'ZAVRIEŤ',
-    home: 'DOMOV', all: 'VŠETKO', contact: 'KONTAKT', globe: 'GLOBUS', list: 'ZOZNAM',
+    home: 'DOMOV', all: 'VŠETKO', about: 'O MNE', contact: 'KONTAKT', globe: 'GLOBUS', list: 'ZOZNAM',
     selectedWork: 'VYBRANÉ PRÁCE', allProjects: 'VŠETKY PROJEKTY', contactTitle: 'NAPÍŠ MI',
     messageLabel: 'SPRÁVA', messagePlaceholder: 'NAPÍŠ SPRÁVU…', sendMessage: 'ODOSLAŤ',
     instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL', nextProject: 'ĎALŠÍ PROJEKT', client: 'KLIENT', year: 'ROK',
@@ -28,4 +28,31 @@ export const contactData = {
   email: 'viky.kubincova@gmail.com',
   instagramLabel: '@vikindela_',
   instagramHref: 'https://www.instagram.com/vikindela_/',
+}
+
+// Stránka O MNE (/about). Texty prepíš tu – v oboch jazykoch.
+// `photo` – portrét (napr. '/about-portrait.jpg' v /public); kým je null, ukáže sa šedý rámik.
+// `sections` – bloky pod textom (štúdium, skúsenosti…); každý má nadpis a riadky. Blok môžeš pridať aj zmazať.
+export const aboutData = {
+  photo: null,
+  en: {
+    name: 'VIKTÓRIA KUBINCOVÁ',
+    bio: 'A SHORT TEXT ABOUT ME IS COMING SOON – WHO I AM, WHAT I DO AND WHAT DRIVES MY WORK.',
+    focusLabel: 'FOCUS',
+    sections: [
+      { label: 'EDUCATION', lines: ['SCHOOL — FIELD OF STUDY', 'YEAR – YEAR'] },
+      { label: 'EXPERIENCE', lines: ['PROJECT / CLIENT — ROLE', 'YEAR'] },
+      { label: 'BASED IN', lines: ['CITY, COUNTRY'] },
+    ],
+  },
+  sk: {
+    name: 'VIKTÓRIA KUBINCOVÁ',
+    bio: 'KRÁTKY TEXT O MNE PRIPRAVUJEM – KTO SOM, ČO ROBÍM A ČO MA PRI PRÁCI ŽENIE DOPREDU.',
+    focusLabel: 'ZAMERANIE',
+    sections: [
+      { label: 'ŠTÚDIUM', lines: ['ŠKOLA — ODBOR', 'ROK – ROK'] },
+      { label: 'SKÚSENOSTI', lines: ['PROJEKT / KLIENT — ROLA', 'ROK'] },
+      { label: 'ŽIJEM V', lines: ['MESTO, KRAJINA'] },
+    ],
+  },
 }

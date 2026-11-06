@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import AllProjects from './pages/AllProjects'
 import Contact from './pages/Contact'
+import About from './pages/About'
 import ProjectDetail from './pages/ProjectDetail'
 import CookieBanner from './components/CookieBanner'
 import EntryGate, { ENTRY_EXIT_MS } from './components/EntryGate'
@@ -45,6 +46,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home introDelay={stage === 'leaving' ? ENTRY_EXIT_MS * 0.6 : 0} />} />
             <Route path="/all" element={<AllProjects />} />
+            <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/work/:slug" element={<ProjectDetail />} />
           </Routes>
