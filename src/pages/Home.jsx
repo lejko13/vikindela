@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
+import FolderCard from '../components/FolderCard'
 import SiteLogo from '../components/SiteLogo'
 import { projects, projectCategories, categoryById } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
@@ -18,6 +19,15 @@ const AUTO_ROTATE_EASE_MS = 250 // ako rýchlo sa rozbehne / zastane
 const LIST_SPEED_FACTOR = 1.2
 // Guľa sa dá chytiť a ťahať len v kruhu okolo nej (násobok polomeru gule), nie po celej stránke.
 const DRAG_ARENA_SCALE = 1.4
+// Prst pri ťahaní: guľa sa k nemu plynulo dotiahne (čím viac, tým rýchlejšie)
+const TOUCH_FOLLOW = 0.34
+// Priečinok je širší než vyšší (ako ikona priečinka na Macu)
+const FOLDER_RATIO = 1.15
+// Po kliknutí sa priečinok najprv otvorí, až potom sa prejde na kategóriu
+const FOLDER_OPEN_MS = 320
+
+// Na guli sa používajú zmenšené fotky (public/projects/thumbs), aby sa točila plynulo
+const thumbFor = (src) => (src?.startsWith('/projects/') ? src.replace('/projects/', '/projects/thumbs/') : src)
 
 // Guľa je rozdelená na 4 pásy (zhora nadol) — jeden pás = jedna kategória.
 // Klik na ktorýkoľvek obrázok v páse ťa hodí na danú kategóriu na stránke ALL.
@@ -38,7 +48,7 @@ function makeSphereNodes(radius, count) {
   const categoryPool = projectCategories.map((c) => {
     const items = projects.filter((p) => p.group === c.id)
     const pool = items.flatMap((p) => {
-      const sources = [p.image, ...(p.gallery || []).map((photo) => photo.src)].filter(Boolean)
+      const sources = [p.image, ...(p.gallery || []).map((photo) => photo.src)].filter(Boolean).map(thumbFor)
       const unique = [...new Set(sources)]
       return unique.length ? unique.map((src) => ({ ...p, image: src })) : [p]
     })
@@ -58,7 +68,6 @@ function makeSphereNodes(radius, count) {
       project,
       base: { x: Math.cos(angle) * ring * radius, y: y * radius, z: Math.sin(angle) * ring * radius },
       size: [0.72, 0.96, 1.18, 0.84, 1.08, 0.9][i % 6],
-      ratio: [0.78, 0.88, 0.7, 1.0, 0.82][i % 5],
     }
   })
 }
@@ -74,15 +83,19 @@ function rotatePoint(point, rx, ry) {
 export default function Home({ introDelay = 0 }) {
   const { language, t } = useLanguage()
   const { search } = useLocation()
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [viewport, setViewport] = useState({ w: 1440, h: 900 })
-  const [rotation, setRotation] = useState({ x: -0.12, y: -0.32 })
   const [view, setView] = useState('globe')
+  const [openFolder, setOpenFolder] = useState(null)
 
-  const rotationRef = useRef(rotation)
-  const targetRotationRef = useRef(rotation)
-  const touchRafRef = useRef(null)
+  // Natočenie gule nie je React stav – mení sa 60× za sekundu, preto sa kartičky posúvajú
+  // priamo cez ich štýly (bez prekresľovania celej stránky). `target` je kam sa má guľa dotočiť.
+  const rotationRef = useRef({ x: -0.12, y: -0.32 })
+  const targetRotationRef = useRef({ x: -0.12, y: -0.32 })
+  const nodeElsRef = useRef([])
+  const captionElsRef = useRef([])
   const homeRef = useRef(null)
   const listRef = useRef(null)
   const dragRef = useRef({ active: false, moved: false, pointerId: null, x: 0, y: 0 })
@@ -137,44 +150,6 @@ export default function Home({ introDelay = 0 }) {
     }
   }, [])
 
-  useEffect(() => {
-    rotationRef.current = rotation
-    if (!dragRef.current.active) targetRotationRef.current = rotation
-  }, [rotation])
-
-  useEffect(() => {
-    return () => {
-      if (touchRafRef.current) cancelAnimationFrame(touchRafRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (loading || view !== 'globe') return
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let raf
-    let last = performance.now()
-    let speed = 0
-    const tick = (now) => {
-      const dt = Math.min(50, now - last)
-      last = now
-      if (dragRef.current.active || touchRafRef.current) {
-        speed = 0
-      } else {
-        const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
-        speed += ((idle ? AUTO_ROTATE_SPEED : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
-        if (speed > 0.0005) {
-          const next = { x: rotationRef.current.x, y: rotationRef.current.y - (speed * dt) / 1000 }
-          rotationRef.current = next
-          targetRotationRef.current = next
-          setRotation(next)
-        }
-      }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [loading, view])
-
   const isMobile = viewport.w < 760
 
   const radius = useMemo(() => {
@@ -192,6 +167,8 @@ export default function Home({ introDelay = 0 }) {
     if (!el) return
     hoveringCardRef.current = false
     const pxPerSecond = radius * AUTO_ROTATE_SPEED * LIST_SPEED_FACTOR
+    const row = el.firstElementChild
+    const loopWidth = row.children[projects.length].offsetLeft - row.children[0].offsetLeft
     let raf
     let last = performance.now()
     let speed = 0
@@ -207,8 +184,6 @@ export default function Home({ introDelay = 0 }) {
       const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
       speed += ((idle ? pxPerSecond : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
       if (speed > 0.05) {
-        const row = el.firstElementChild
-        const loopWidth = row.children[projects.length].offsetLeft - row.children[0].offsetLeft
         pos += (speed * dt) / 1000
         if (pos >= loopWidth) pos -= loopWidth
         el.scrollLeft = pos
@@ -219,32 +194,86 @@ export default function Home({ introDelay = 0 }) {
     return () => cancelAnimationFrame(raf)
   }, [loading, view, radius])
 
-  // Optimization applies ONLY to GLOBE.
-  // Desktop keeps 30 visual nodes, phones render only 10.
-  // LIST below still maps the complete `projects` array unchanged.
+  // Desktop má 30 priečinkov, mobil 20. LIST nižšie ukazuje všetky projekty.
   const globeDisplayCount = isMobile ? MOBILE_DISPLAY_COUNT : DESKTOP_DISPLAY_COUNT
   const nodes = useMemo(
     () => makeSphereNodes(radius, globeDisplayCount),
     [radius, globeDisplayCount]
   )
-  const visualNodes = useMemo(() => nodes.map((node) => {
-    const p = rotatePoint(node.base, rotation.x, rotation.y)
-    const depth = (p.z + radius) / (radius * 2)
-    const perspective = 0.76 + depth * 0.5
-    const baseWidth = isMobile ? Math.max(44, Math.min(viewport.w * 0.145, 68)) : Math.max(70, Math.min(viewport.w * 0.068, 126))
-    const width = baseWidth * node.size * perspective
-    return { ...node, p, depth, opacity: 0.10 + depth * 0.90, width, height: width / node.ratio }
-  }).sort((a,b) => a.p.z - b.p.z), [nodes, rotation, radius, viewport.w, isMobile])
+  const folderWidth = isMobile ? Math.max(48, Math.min(viewport.w * 0.155, 74)) : Math.max(76, Math.min(viewport.w * 0.074, 136))
 
-  const rotateFromWheel = (event) => {
-    lastInteractionRef.current = performance.now()
-    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.h : 1
-    const next = {
-      x: rotationRef.current.x - event.deltaY * unit * 0.00235,
-      y: rotationRef.current.y + event.deltaX * unit * 0.00235,
+  // Jedna slučka pre guľu: samootáčanie, dotiahnutie k prstu a posunutie priečinkov na nové miesta
+  useEffect(() => {
+    if (view !== 'globe') return
+    hoveringCardRef.current = false
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const last = { opacity: [], z: [], caption: [] }
+
+    const place = () => {
+      const { x: rx, y: ry } = rotationRef.current
+      nodes.forEach((node, i) => {
+        const el = nodeElsRef.current[i]
+        if (!el) return
+        const p = rotatePoint(node.base, rx, ry)
+        const depth = (p.z + radius) / (radius * 2)
+        const scale = 0.76 + depth * 0.5
+        el.style.transform = `translate3d(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px,0) translate(-50%,-50%) scale(${scale.toFixed(3)})`
+        const opacity = (0.10 + depth * 0.90).toFixed(2)
+        if (last.opacity[i] !== opacity) { el.style.opacity = opacity; last.opacity[i] = opacity }
+        const z = String(Math.round(depth * 1000))
+        if (last.z[i] !== z) { el.style.zIndex = z; last.z[i] = z }
+        // Zadné (vyblednuté) priečinky nemajú popisok, aby guľa nebola preplnená
+        const caption = depth > 0.45 ? 'visible' : 'hidden'
+        const captionEl = captionElsRef.current[i]
+        if (captionEl && last.caption[i] !== caption) { captionEl.style.visibility = caption; last.caption[i] = caption }
+      })
     }
-    rotationRef.current = next
-    setRotation(next)
+
+    const placed = { x: NaN, y: NaN }
+    const placeIfMoved = () => {
+      const rot = rotationRef.current
+      if (rot.x === placed.x && rot.y === placed.y) return
+      placed.x = rot.x; placed.y = rot.y
+      place()
+    }
+    placeIfMoved()
+    let raf
+    let prev = performance.now()
+    let speed = 0
+    const tick = (now) => {
+      const dt = Math.min(50, now - prev)
+      prev = now
+      const target = targetRotationRef.current
+      if (dragRef.current.active) {
+        speed = 0
+      } else if (!loading && !reduced) {
+        const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
+        speed += ((idle ? AUTO_ROTATE_SPEED : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
+        if (speed > 0.0005) target.y -= (speed * dt) / 1000
+      }
+      const rot = rotationRef.current
+      const dx = target.x - rot.x, dy = target.y - rot.y
+      if (Math.abs(dx) + Math.abs(dy) > 0.00001) {
+        const k = 1 - Math.pow(1 - TOUCH_FOLLOW, dt / 16.67)
+        rot.x += dx * k
+        rot.y += dy * k
+      }
+      placeIfMoved()
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [view, loading, nodes, radius])
+
+  // Myš a koliesko točia guľou hneď, prst cez plynulé dotiahnutie (target)
+  const rotateBy = (dx, dy, immediate) => {
+    const target = targetRotationRef.current
+    target.x += dx
+    target.y += dy
+    if (immediate) {
+      rotationRef.current.x = target.x
+      rotationRef.current.y = target.y
+    }
   }
 
   useEffect(() => {
@@ -254,9 +283,11 @@ export default function Home({ introDelay = 0 }) {
       if (document.body.classList.contains('menu-locked')) { event.preventDefault(); return }
       if (event.ctrlKey) return
       event.preventDefault(); event.stopPropagation()
-      if (view === 'globe') rotateFromWheel(event)
-      else if (listRef.current) {
-        lastInteractionRef.current = performance.now()
+      lastInteractionRef.current = performance.now()
+      if (view === 'globe') {
+        const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.h : 1
+        rotateBy(-event.deltaY * unit * 0.00235, event.deltaX * unit * 0.00235, true)
+      } else if (listRef.current) {
         listRef.current.scrollLeft += event.deltaX + event.deltaY
       }
     }
@@ -264,46 +295,11 @@ export default function Home({ introDelay = 0 }) {
     return () => el.removeEventListener('wheel', onWheel)
   }, [view, viewport.h])
 
-  const runSmoothTouchRotation = () => {
-    if (touchRafRef.current) return
-
-    const animate = () => {
-      const current = rotationRef.current
-      const target = targetRotationRef.current
-
-      // Smoothly approach finger position instead of forcing a React render
-      // for every raw touchmove event.
-      const ease = 0.34
-      const next = {
-        x: current.x + (target.x - current.x) * ease,
-        y: current.y + (target.y - current.y) * ease,
-      }
-
-      rotationRef.current = next
-      setRotation(next)
-
-      const distance =
-        Math.abs(target.x - next.x) +
-        Math.abs(target.y - next.y)
-
-      if (distance > 0.00015) {
-        touchRafRef.current = requestAnimationFrame(animate)
-      } else {
-        rotationRef.current = target
-        setRotation(target)
-        touchRafRef.current = null
-      }
-    }
-
-    touchRafRef.current = requestAnimationFrame(animate)
-  }
-
   const startDrag = (event) => {
     if (view !== 'globe' || (event.pointerType === 'mouse' && event.button !== 0)) return
     if (event.target.closest?.('header, footer, [data-menu-overlay]')) return
     const center = globeCenterRef.current?.getBoundingClientRect()
     if (!center || Math.hypot(event.clientX - center.left, event.clientY - center.top) > radius * DRAG_ARENA_SCALE) return
-    targetRotationRef.current = rotationRef.current
     dragRef.current = { active: true, moved: false, pointerId: event.pointerId, x: event.clientX, y: event.clientY }
   }
 
@@ -317,26 +313,9 @@ export default function Home({ introDelay = 0 }) {
     }
     if (drag.moved) {
       event.preventDefault()
-      if (event.pointerType === 'touch') {
-        // Finger controls a target rotation; RAF interpolates to it smoothly.
-        const s = 0.0058
-        const target = targetRotationRef.current
-        targetRotationRef.current = {
-          x: target.x - dy * s,
-          y: target.y + dx * s,
-        }
-        runSmoothTouchRotation()
-      } else {
-        // Mouse stays immediate and precise.
-        const s = 0.0054
-        const next = {
-          x: rotationRef.current.x - dy * s,
-          y: rotationRef.current.y + dx * s,
-        }
-        rotationRef.current = next
-        targetRotationRef.current = next
-        setRotation(next)
-      }
+      const touch = event.pointerType === 'touch'
+      const s = touch ? 0.0058 : 0.0054
+      rotateBy(-dy * s, dx * s, !touch)
     }
     drag.x = event.clientX; drag.y = event.clientY
   }
@@ -353,8 +332,12 @@ export default function Home({ introDelay = 0 }) {
     dragRef.current = { active: false, moved: false, pointerId: null, x: 0, y: 0 }
   }
 
-  const openProject = (event) => {
-    if (suppressClickRef.current) { event.preventDefault(); event.stopPropagation() }
+  // Klik na priečinok: najprv sa otvorí, potom sa prejde na kategóriu
+  const openProject = (event, key, destination) => {
+    event.preventDefault()
+    if (suppressClickRef.current || openFolder) { event.stopPropagation(); return }
+    setOpenFolder(key)
+    setTimeout(() => navigate(destination), FOLDER_OPEN_MS)
   }
 
   return (
@@ -378,26 +361,26 @@ export default function Home({ introDelay = 0 }) {
             {/* Aréna na chytanie gule – neviditeľný kruh, v ktorom je kurzor „ruka" */}
             <div aria-hidden="true" className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full"
               style={{ width: radius * DRAG_ARENA_SCALE * 2, height: radius * DRAG_ARENA_SCALE * 2 }} />
-            {visualNodes.map((node) => {
+            {nodes.map((node, i) => {
               const project = localized(node.project, language)
               const category = categoryById[project.group]
+              const width = folderWidth * node.size
+              const destination = destinationForIndex(node.index, nodes.length)
               return (
-                <Link key={node.key} to={destinationForIndex(node.index, nodes.length)} onClick={openProject}
+                <Link key={node.key} to={destination} ref={(el) => { nodeElsRef.current[i] = el }}
+                  onClick={(event) => openProject(event, node.key, destination)}
                   onMouseEnter={() => { hoveringCardRef.current = true }}
                   onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
-                  className="group absolute left-0 top-0 cursor-pointer"
-                  style={{ width: node.width, height: node.height, opacity: node.opacity, zIndex: Math.round(node.depth * 1000), transform: `translate3d(${node.p.x}px,${node.p.y}px,0) translate(-50%,-50%)` }}>
-                  <div className="pink-hover relative h-full w-full overflow-hidden bg-[#e9e9e6]">
-                    <ProjectImage project={project} alt={project.title} className="pointer-events-none h-full w-full" imgClassName="object-cover" showLabel={false} />
-                  </div>
-                  {/* Popisok pod kartičkou: kategória + názov projektu. Zadné (vyblednuté) kartičky ho nemajú, aby guľa nebola preplnená. */}
-                  {node.depth > 0.45 && (
-                    <span className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em]"
-                      style={{ fontSize: Math.max(9, Math.min(13, node.width * 0.095)), color: category?.color }}>
-                      <span className="block whitespace-nowrap">{category?.label[language] || category?.label.en}</span>
-                      <span className="block whitespace-nowrap opacity-65">{project.placeholder ? t.comingSoon : project.title}</span>
-                    </span>
-                  )}
+                  className="group absolute left-0 top-0 cursor-pointer will-change-transform"
+                  style={{ width, height: width / FOLDER_RATIO, opacity: 0 }}>
+                  <FolderCard image={project.image} tone={category?.tone} open={openFolder === node.key} label={project.title} />
+                  {/* Popisok pod priečinkom: kategória + názov projektu */}
+                  <span ref={(el) => { captionElsRef.current[i] = el }}
+                    className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em]"
+                    style={{ fontSize: Math.max(8, Math.min(12, width * 0.088)), color: category?.color, visibility: 'hidden' }}>
+                    <span className="block whitespace-nowrap">{category?.label[language] || category?.label.en}</span>
+                    <span className="block whitespace-nowrap opacity-65">{project.placeholder ? t.comingSoon : project.title}</span>
+                  </span>
                 </Link>
               )
             })}
