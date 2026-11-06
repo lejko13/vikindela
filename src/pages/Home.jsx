@@ -11,7 +11,7 @@ const MOBILE_DISPLAY_COUNT = 20
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 // Guľa sa sama pomaly otáča sprava doľava (radiány za sekundu). Pri ťahaní, scrollovaní
 // alebo keď je myš na kartičke zastane a po chvíli sa plynulo rozbehne znova.
-const AUTO_ROTATE_SPEED = 0.1
+const AUTO_ROTATE_SPEED = 0.14
 const AUTO_ROTATE_RESUME_MS = 250
 const AUTO_ROTATE_EASE_MS = 250 // ako rýchlo sa rozbehne / zastane
 // Guľa sa dá chytiť a ťahať len v kruhu okolo nej (násobok polomeru gule), nie po celej stránke.
