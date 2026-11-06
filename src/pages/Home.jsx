@@ -13,6 +13,8 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 // alebo keď je myš na kartičke zastane a po chvíli sa plynulo rozbehne znova.
 const AUTO_ROTATE_SPEED = 0.1
 const AUTO_ROTATE_RESUME_MS = 1400
+// Guľa sa dá chytiť a ťahať len v kruhu okolo nej (násobok polomeru gule), nie po celej stránke.
+const DRAG_ARENA_SCALE = 1.4
 
 // Guľa je rozdelená na 4 pásy (zhora nadol) — jeden pás = jedna kategória.
 // Klik na ktorýkoľvek obrázok v páse ťa hodí na danú kategóriu na stránke ALL.
@@ -82,6 +84,7 @@ export default function Home({ introDelay = 0 }) {
   const listRef = useRef(null)
   const dragRef = useRef({ active: false, moved: false, pointerId: null, x: 0, y: 0 })
   const suppressClickRef = useRef(false)
+  const globeCenterRef = useRef(null)
   const lastInteractionRef = useRef(0)
   const hoveringCardRef = useRef(false)
 
@@ -256,6 +259,8 @@ export default function Home({ introDelay = 0 }) {
   const startDrag = (event) => {
     if (view !== 'globe' || (event.pointerType === 'mouse' && event.button !== 0)) return
     if (event.target.closest?.('header, footer, [data-menu-overlay]')) return
+    const center = globeCenterRef.current?.getBoundingClientRect()
+    if (!center || Math.hypot(event.clientX - center.left, event.clientY - center.top) > radius * DRAG_ARENA_SCALE) return
     targetRotationRef.current = rotationRef.current
     dragRef.current = { active: true, moved: false, pointerId: event.pointerId, x: event.clientX, y: event.clientY }
   }
@@ -311,7 +316,7 @@ export default function Home({ introDelay = 0 }) {
   }
 
   return (
-    <main ref={homeRef} className="fixed inset-0 min-h-0 select-none overflow-hidden bg-paper [touch-action:none] cursor-grab"
+    <main ref={homeRef} className="fixed inset-0 min-h-0 select-none overflow-hidden bg-paper [touch-action:none]"
       onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}
       onPointerLeave={(e) => dragRef.current.active && e.buttons === 0 && endDrag(e)}>
 
@@ -327,7 +332,10 @@ export default function Home({ introDelay = 0 }) {
         <h1 className="sr-only">{t.introLine1} {t.introLine2}</h1>
 
         {view === 'globe' ? (
-          <div className="absolute left-1/2 top-[51%] z-10 h-0 w-0 md:top-1/2">
+          <div ref={globeCenterRef} className="absolute left-1/2 top-[51%] z-10 h-0 w-0 md:top-1/2">
+            {/* Aréna na chytanie gule – neviditeľný kruh, v ktorom je kurzor „ruka" */}
+            <div aria-hidden="true" className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full"
+              style={{ width: radius * DRAG_ARENA_SCALE * 2, height: radius * DRAG_ARENA_SCALE * 2 }} />
             {visualNodes.map((node) => {
               const project = localized(node.project, language)
               const category = categoryById[project.group]
