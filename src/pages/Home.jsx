@@ -1,22 +1,51 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
-import { projects } from '../data/projects'
+import ProjectImage from '../components/ProjectImage'
+import SiteLogo from '../components/SiteLogo'
+import { projects, projectCategories } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
-import { contactData } from '../data/siteContent'
 
 const DESKTOP_DISPLAY_COUNT = 30
 const MOBILE_DISPLAY_COUNT = 20
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 
+// Guľa je rozdelená na 4 pásy (zhora nadol) — jeden pás = jedna kategória.
+// Klik na ktorýkoľvek obrázok v páse ťa hodí na danú kategóriu na stránke ALL.
+// Tvar gule, počet uzlov, veľkosti a pozície zostávajú rovnaké.
+const GLOBE_ZONES = projectCategories.map((c) => `/all#${c.id}`)
+
+function bucketForIndex(index, count) {
+  return Math.min(GLOBE_ZONES.length - 1, Math.floor((index * GLOBE_ZONES.length) / count))
+}
+
+function destinationForIndex(index, count) {
+  return GLOBE_ZONES[bucketForIndex(index, count)]
+}
+
 function makeSphereNodes(radius, count) {
+  // Pre každú kategóriu zoznam „obrázkov" — náhľady projektov + fotky z galérií.
+  // Uzly v páse sa nimi striedajú, aby sa ten istý obrázok neopakoval vedľa seba.
+  const categoryPool = projectCategories.map((c) => {
+    const items = projects.filter((p) => p.group === c.id)
+    const pool = items.flatMap((p) => {
+      const sources = [p.image, ...(p.gallery || [])].filter(Boolean)
+      const unique = [...new Set(sources)]
+      return unique.length ? unique.map((src) => ({ ...p, image: src })) : [p]
+    })
+    return pool.length ? pool : [projects[0]]
+  })
+  const bucketCounters = projectCategories.map(() => 0)
   return Array.from({ length: count }, (_, i) => {
     const y = 1 - (i / Math.max(1, count - 1)) * 2
     const ring = Math.sqrt(Math.max(0, 1 - y * y))
     const angle = GOLDEN_ANGLE * i
-    const project = projects[i % projects.length]
+    const bucket = bucketForIndex(i, count)
+    const pool = categoryPool[bucket]
+    const project = pool[bucketCounters[bucket]++ % pool.length]
     return {
       key: `${project.slug}-${i}`,
+      index: i,
       project,
       base: { x: Math.cos(angle) * ring * radius, y: y * radius, z: Math.sin(angle) * ring * radius },
       size: [0.72, 0.96, 1.18, 0.84, 1.08, 0.9][i % 6],
@@ -33,7 +62,7 @@ function rotatePoint(point, rx, ry) {
   return { x: x1, y: point.y * cosX - z1 * sinX, z: point.y * sinX + z1 * cosX }
 }
 
-export default function Home() {
+export default function Home({ introDelay = 0 }) {
   const { language, t } = useLanguage()
   const { search } = useLocation()
   const [loading, setLoading] = useState(true)
@@ -54,18 +83,23 @@ export default function Home() {
     setLoading(true)
     setLoadingProgress(0)
     let progress = 0
-    const interval = setInterval(() => {
-      const remaining = 100 - progress
-      const step = Math.max(1, Math.ceil(remaining * (0.08 + Math.random() * 0.10)))
-      progress = Math.min(99, progress + step)
-      setLoadingProgress(progress)
-    }, 70)
+    let interval
+    // Pri príchode z úvodnej obrazovky sa počítadlo rozbehne, až keď sa fotka začne odrolovať
+    const start = setTimeout(() => {
+      interval = setInterval(() => {
+        const remaining = 100 - progress
+        const step = Math.max(1, Math.ceil(remaining * (0.08 + Math.random() * 0.10)))
+        progress = Math.min(99, progress + step)
+        setLoadingProgress(progress)
+      }, 70)
+    }, introDelay)
+    let hide
     const finish = setTimeout(() => {
       clearInterval(interval)
       setLoadingProgress(100)
-      setTimeout(() => setLoading(false), 180)
-    }, 1050)
-    return () => { clearInterval(interval); clearTimeout(finish) }
+      hide = setTimeout(() => setLoading(false), 180)
+    }, introDelay + 1050)
+    return () => { clearTimeout(start); clearInterval(interval); clearTimeout(finish); clearTimeout(hide) }
   }, [])
 
   useEffect(() => {
@@ -247,24 +281,23 @@ export default function Home() {
       onPointerLeave={(e) => dragRef.current.active && e.buttons === 0 && endDrag(e)}>
 
       <div className={`absolute inset-0 z-[20000] flex flex-col justify-between bg-paper px-[14px] pt-[15px] pb-[14px] transition-all duration-700 md:px-6 md:pt-[22px] md:pb-5 ${loading ? 'translate-y-0 opacity-100 visible' : '-translate-y-full opacity-0 invisible pointer-events-none'}`}>
-        <div className="text-[28px] font-black leading-[.8] tracking-[-.065em] md:text-[clamp(28px,2.55vw,48px)]">vikindela</div>
+        <div className="-my-[6px] md:-my-[10px]"><SiteLogo /></div>
         <div className="flex items-end justify-between text-[13px] font-black tracking-[-.04em] md:text-[clamp(13px,1.2vw,18px)]"><span>{t.loading}</span><span>{String(loadingProgress).padStart(2,'0')}</span></div>
       </div>
 
       <div className={`absolute inset-0 transition-all duration-500 ${loading ? 'translate-y-2.5 opacity-0' : 'translate-y-0 opacity-100'}`}>
         <SiteHeader />
 
-        <div className="pointer-events-none absolute left-[14px] top-[58px] z-[4500] md:left-6 md:top-[88px]">
-          <h1 className="m-0 text-[clamp(21px,7.2vw,30px)] font-black leading-[.87] tracking-[-.065em] md:text-[clamp(26px,2.35vw,46px)]">{t.introLine1}<br />{t.introLine2}</h1>
-        </div>
+        {/* Nadpis je skrytý (vizuálne odstránený), ostáva len pre vyhľadávače a čítačky obrazovky */}
+        <h1 className="sr-only">{t.introLine1} {t.introLine2}</h1>
 
         {view === 'globe' ? (
           <div className="absolute left-1/2 top-[51%] z-10 h-0 w-0 md:top-1/2">
             {visualNodes.map((node) => (
-              <Link key={node.key} to={`/work/${node.project.slug}`} onClick={openProject}
-                className="absolute left-0 top-0 cursor-pointer overflow-hidden bg-[#e9e9e6] transition-[filter] duration-150 hover:brightness-[.82]"
+              <Link key={node.key} to={destinationForIndex(node.index, nodes.length)} onClick={openProject}
+                className="pink-hover absolute left-0 top-0 cursor-pointer overflow-hidden bg-[#e9e9e6]"
                 style={{ width: node.width, height: node.height, opacity: node.opacity, zIndex: Math.round(node.depth * 1000), transform: `translate3d(${node.p.x}px,${node.p.y}px,0) translate(-50%,-50%)` }}>
-                <img draggable="false" src={node.project.image} alt={localized(node.project, language).title} className="pointer-events-none h-full w-full object-cover" />
+                <ProjectImage project={node.project} alt={localized(node.project, language).title} className="pointer-events-none h-full w-full" imgClassName="object-cover" />
               </Link>
             ))}
           </div>
@@ -272,9 +305,9 @@ export default function Home() {
           <section ref={listRef} className="no-scrollbar absolute left-0 right-0 top-1/2 z-[1200] -translate-y-1/2 overflow-x-auto overflow-y-hidden px-0 py-6 [touch-action:pan-x]">
             <div className="flex w-max min-w-full items-center gap-4 px-4 md:gap-[27px] md:px-[30px]">
               {[...projects, ...projects].map((project, index) => (
-                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`} className="group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
-                  <img src={project.image} alt={localized(project, language).title} className="h-full w-full object-cover transition group-hover:scale-[1.035] group-hover:brightness-[.78]" />
-                  <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase opacity-0 transition-opacity group-hover:opacity-100">{localized(project, language).title}</span>
+                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`} className="pink-hover group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
+                  <ProjectImage project={project} alt={localized(project, language).title} className="h-full w-full transition group-hover:scale-[1.035]" imgClassName="object-cover" />
+                  <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase text-pink opacity-0 transition-opacity group-hover:opacity-100">{localized(project, language).title}</span>
                 </Link>
               ))}
             </div>
@@ -282,12 +315,7 @@ export default function Home() {
         )}
 
         <footer className="absolute bottom-[max(14px,env(safe-area-inset-bottom))] left-[14px] right-[14px] z-[5000] flex items-end justify-between md:bottom-5 md:left-6 md:right-6">
-          <div className="flex flex-col items-start gap-[1px] text-[15px] font-black uppercase leading-[1.05] tracking-[-.035em] md:gap-[3px] md:text-[clamp(16px,1.25vw,21px)]">
-            <a href={`mailto:${contactData.email}`}>{contactData.email.toUpperCase()}</a>
-            <a href={`tel:${contactData.phoneHref}`}>{contactData.phoneDisplay}</a>
-            <a href={contactData.instagramHref} target="_blank" rel="noreferrer">INSTAGRAM {contactData.instagramLabel.toUpperCase()}</a>
-          </div>
-          <button type="button" onClick={() => setView(view === 'globe' ? 'list' : 'globe')} className="text-[14px] font-black tracking-[-.045em] md:text-[clamp(14px,1.25vw,20px)]">{view === 'globe' ? t.list : t.globe}</button>
+          <button type="button" onClick={() => setView(view === 'globe' ? 'list' : 'globe')} className="ml-auto transition-colors hover:text-pink text-[14px] font-black tracking-[-.045em] md:text-[clamp(14px,1.25vw,20px)]">{view === 'globe' ? t.list : t.globe}</button>
         </footer>
       </div>
     </main>

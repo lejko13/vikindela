@@ -1,117 +1,144 @@
+// 4 kategórie webu. Poradie = poradie pásov na guli (zhora nadol) aj sekcií na stránke ALL.
+// `tone` je odtieň šedej pre placeholdery danej kategórie.
 export const projectCategories = [
-  { id: 'fashion', label: { en: 'FASHION', sk: 'MÓDA' } },
-  { id: 'editorial', label: { en: 'EDITORIAL', sk: 'EDITORIAL' } },
-  { id: 'objects', label: { en: 'OBJECTS', sk: 'OBJEKTY' } },
-  { id: 'spaces', label: { en: 'SPACES', sk: 'PRIESTORY' } },
+  { id: 'art-directing', label: { en: 'ART DIRECTING', sk: 'ART DIRECTING' }, tone: '#e6e6e2' },
+  { id: 'styling', label: { en: 'STYLING', sk: 'STYLING' }, tone: '#d9d9d4' },
+  { id: 'fashion-design', label: { en: 'FASHION DESIGN', sk: 'MÓDNY DIZAJN' }, tone: '#cbcbc5' },
+  { id: 'social-media', label: { en: 'SOCIAL MEDIA', sk: 'SOCIÁLNE SIETE' }, tone: '#bdbdb6' },
 ]
 
-export const projects = [
+export const categoryById = Object.fromEntries(projectCategories.map((c) => [c.id, c]))
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REÁLNE PROJEKTY
+// Polia projektu:
+//   image   – náhľad (globus, zoznam, ALL). Pri videu je to obrázok z videa.
+//   video   – (voliteľné) .mp4 v /public, zobrazí sa na detaile projektu
+//   gallery – (voliteľné) zoznam fotiek na detaile projektu
+//   credits – (voliteľné) zoznam [rola, meno] na detaile projektu
+// ─────────────────────────────────────────────────────────────────────────────
+const realProjects = [
   {
-    slug: 'motion-theory', title: 'Motion Theory', group: 'fashion', client: 'Montek', year: '2026', category: 'Campaign', location: 'London',
-    role: 'Photography / Creative Direction', services: ['Creative Direction', 'Photography', 'Art Direction'],
-    description: 'A product launch campaign combining bold compositions with motion-first storytelling.',
+    slug: 'who-am-i-to-love-you',
+    title: 'WHO AM I TO LOVE YOU',
+    group: 'art-directing',
+    client: '—',
+    year: '2024',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'ART DIRECTOR',
+    services: ['ART DIRECTING', 'VIDEO'],
+    description: '',
     translations: {
-      sk: {"description": "Kampaň k uvedeniu produktu spájajúca výrazné kompozície s vizuálnym príbehom založeným na pohybe.", "category": "Kampaň", "location": "Londýn", "role": "Fotografia / Kreatívne vedenie", "services": ["Kreatívne vedenie", "Fotografia", "Art direction"]}
+      sk: { description: '' },
     },
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=88',
+    image: '/projects/who-am-i-to-love-you.jpg',
+    video: '/projects/who-am-i-to-love-you.mp4',
   },
   {
-    slug: 'black-form', title: 'Black Form', group: 'fashion', client: 'Editorial', year: '2026', category: 'Still Life', location: 'Studio',
-    role: 'Photography', services: ['Photography', 'Lighting', 'Retouch'],
-    description: 'A dark product study focused on shape, surface and controlled light.',
+    slug: 'me-myself-and-others',
+    title: 'ME, MYSELF AND OTHERS',
+    group: 'art-directing',
+    client: 'Personal project',
+    year: '2025',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'ART DIRECTOR',
+    services: ['ART DIRECTING', 'VIDEO'],
+    description: '',
     translations: {
-      sk: {"description": "Tmavá produktová štúdia zameraná na tvar, povrch a kontrolované svetlo.", "category": "Zátišie", "location": "Ateliér", "role": "Fotografia", "services": ["Fotografia", "Svetlo", "Retuš"]}
+      sk: { client: 'Osobný projekt', description: '' },
     },
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=88',
+    image: '/projects/me-myself-and-others.jpg',
+    video: '/projects/me-myself-and-others.mp4',
   },
   {
-    slug: 'soft-objects', title: 'Soft Objects', group: 'objects', client: 'Personal', year: '2026', category: 'Objects', location: 'New York',
-    role: 'Creative Direction / Photography', services: ['Concept', 'Photography', 'Set Design'],
-    description: 'A tactile still-life series built around soft forms and graphic compositions.',
+    slug: 'in-my-melancholic-era',
+    title: 'IN MY MELANCHOLIC ERA',
+    group: 'art-directing',
+    client: 'Student project',
+    year: '2023',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'ART DIRECTOR',
+    services: ['ART DIRECTING', 'VIDEO'],
+    description: '',
     translations: {
-      sk: {"description": "Taktilná séria zátiší postavená na mäkkých formách a grafických kompozíciách.", "category": "Objekty", "location": "New York", "role": "Kreatívne vedenie / Fotografia", "services": ["Koncept", "Fotografia", "Scénografia"]}
+      sk: { client: 'Študentský projekt', description: '' },
     },
-    image: 'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1600&q=88',
+    image: '/projects/in-my-melancholic-era.jpg',
+    video: '/projects/in-my-melancholic-era.mp4',
   },
   {
-    slug: 'red-line', title: 'Red Line', group: 'objects', client: 'Studio', year: '2026', category: 'Material Study', location: 'Paris',
-    role: 'Photography', services: ['Photography', 'Set Design'],
-    description: 'A vivid material experiment centered around a single recurring red form.',
+    slug: 'styling-editorial',
+    title: 'EDITORIAL',
+    group: 'styling',
+    client: '—',
+    year: '2024',
+    category: 'STYLING',
+    location: '—',
+    role: 'ART DIRECTING, STYLING, FASHION DESIGN, SET DESIGN',
+    services: ['ART DIRECTING', 'STYLING', 'FASHION DESIGN', 'SET DESIGN'],
+    description: 'Art directing, styling and outfits by Viktória Kubincová. Photography and production by Daniel Rázus.',
+    credits: [
+      ['Art directing, styling, outfits & fashion design', 'Viktória Kubincová'],
+      ['Photography, production', 'Daniel Rázus'],
+      ['Set design', 'Viktória Kubincová'],
+      ['Assistance', 'Radka Dzurčaninová'],
+    ],
     translations: {
-      sk: {"description": "Výrazný materiálový experiment postavený okolo jedného opakujúceho sa červeného prvku.", "category": "Materiálová štúdia", "location": "Paríž", "role": "Fotografia", "services": ["Fotografia", "Scénografia"]}
+      sk: {
+        role: 'ART DIRECTING, STYLING, MÓDNY DIZAJN, SET DESIGN',
+        services: ['ART DIRECTING', 'STYLING', 'MÓDNY DIZAJN', 'SET DESIGN'],
+        description: 'Art directing, styling a outfity: Viktória Kubincová. Fotografia a produkcia: Daniel Rázus.',
+        credits: [
+          ['Art directing, styling, outfity a módny dizajn', 'Viktória Kubincová'],
+          ['Fotografia, produkcia', 'Daniel Rázus'],
+          ['Set design', 'Viktória Kubincová'],
+          ['Asistencia', 'Radka Dzurčaninová'],
+        ],
+      },
     },
-    image: 'https://images.unsplash.com/photo-1533158326339-7f3cf2404354?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'green-room', title: 'Green Room', group: 'spaces', client: 'Architecture', year: '2025', category: 'Architecture', location: 'Berlin',
-    role: 'Photography / Art Direction', services: ['Photography', 'Art Direction'],
-    description: 'An architectural color study using monochromatic space and angular objects.',
-    translations: {
-      sk: {"description": "Architektonická farebná štúdia využívajúca monochromatický priestor a hranaté objekty.", "category": "Architektúra", "location": "Berlín", "role": "Fotografia / Art direction", "services": ["Fotografia", "Art direction"]}
-    },
-    image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'object-study', title: 'Object Study', group: 'objects', client: 'Personal', year: '2025', category: 'Still Life', location: 'Studio',
-    role: 'Photography', services: ['Photography', 'Styling'],
-    description: 'A minimal still-life series exploring proportion, balance and texture.',
-    translations: {
-      sk: {"description": "Minimalistická séria zátiší skúmajúca proporcie, rovnováhu a textúru.", "category": "Zátišie", "location": "Ateliér", "role": "Fotografia", "services": ["Fotografia", "Styling"]}
-    },
-    image: 'https://images.unsplash.com/photo-1528459105426-b9548367069b?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'portrait-one', title: 'Portrait No. 01', group: 'editorial', client: 'Editorial', year: '2025', category: 'Portrait', location: 'London',
-    role: 'Photography', services: ['Photography', 'Direction'],
-    description: 'Portrait imagery with a restrained palette and close attention to form.',
-    translations: {
-      sk: {"description": "Portrétna séria s tlmenou paletou a dôrazom na formu.", "category": "Portrét", "location": "Londýn", "role": "Fotografia", "services": ["Fotografia", "Réžia"]}
-    },
-    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'structure', title: 'Structure', group: 'spaces', client: 'Studio', year: '2025', category: 'Architecture', location: 'Copenhagen',
-    role: 'Photography', services: ['Photography', 'Retouch'],
-    description: 'Graphic architectural photography reduced to rhythm, geometry and light.',
-    translations: {
-      sk: {"description": "Grafická architektonická fotografia redukovaná na rytmus, geometriu a svetlo.", "category": "Architektúra", "location": "Kodaň", "role": "Fotografia", "services": ["Fotografia", "Retuš"]}
-    },
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'material', title: 'Material', group: 'fashion', client: 'Research', year: '2025', category: 'Research', location: 'Studio',
-    role: 'Creative Direction / Photography', services: ['Research', 'Photography', 'Set Design'],
-    description: 'A material-led image series exploring texture and simple constructed scenes.',
-    translations: {
-      sk: {"description": "Obrazová séria vedená materiálom, skúmajúca textúru a jednoduché konštruované scény.", "category": "Výskum", "location": "Ateliér", "role": "Kreatívne vedenie / Fotografia", "services": ["Výskum", "Fotografia", "Scénografia"]}
-    },
-    image: 'https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'detail', title: 'Detail', group: 'editorial', client: 'Editorial', year: '2024', category: 'Editorial', location: 'Milan',
-    role: 'Photography', services: ['Photography', 'Retouch'],
-    description: 'Close-up object photography focused on subtle changes in light and surface.',
-    translations: {
-      sk: {"description": "Detailná objektová fotografia zameraná na jemné zmeny svetla a povrchu.", "category": "Editorial", "location": "Miláno", "role": "Fotografia", "services": ["Fotografia", "Retuš"]}
-    },
-    image: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'workspace', title: 'Workspace', group: 'spaces', client: 'Architecture', year: '2024', category: 'Architecture', location: 'London',
-    role: 'Photography', services: ['Photography', 'Art Direction'],
-    description: 'A clean workplace story balancing human scale with spatial composition.',
-    translations: {
-      sk: {"description": "Čistý príbeh pracovného priestoru balansujúci ľudskú mierku a priestorovú kompozíciu.", "category": "Architektúra", "location": "Londýn", "role": "Fotografia", "services": ["Fotografia", "Art direction"]}
-    },
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=88',
-  },
-  {
-    slug: 'portrait-two', title: 'Portrait No. 02', group: 'editorial', client: 'Editorial', year: '2024', category: 'Portrait', location: 'Paris',
-    role: 'Photography', services: ['Photography', 'Direction'],
-    description: 'A second portrait study built around direct framing and quiet color.',
-    translations: {
-      sk: {"description": "Druhá portrétna štúdia postavená na priamom rámovaní a pokojnej farebnosti.", "category": "Portrét", "location": "Paríž", "role": "Fotografia", "services": ["Fotografia", "Réžia"]}
-    },
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1600&q=88',
+    image: '/projects/styling/styling-06.jpg',
+    gallery: Array.from({ length: 8 }, (_, i) => `/projects/styling/styling-${String(i + 1).padStart(2, '0')}.jpg`),
   },
 ]
+
+// PLACEHOLDERY — len pre kategórie, ktoré ešte nemajú reálny projekt.
+// Keď pridáš projekt do kategórie, placeholdery v nej automaticky zmiznú.
+const PLACEHOLDERS_PER_CATEGORY = 3
+
+const placeholders = projectCategories
+  .filter((category) => !realProjects.some((p) => p.group === category.id))
+  .flatMap((category) =>
+    Array.from({ length: PLACEHOLDERS_PER_CATEGORY }, (_, i) => {
+      const n = String(i + 1).padStart(2, '0')
+      return {
+        slug: `${category.id}-${n}`,
+        title: `Project ${n}`,
+        group: category.id,
+        client: 'Placeholder',
+        year: '2026',
+        category: category.label.en,
+        location: '—',
+        role: category.label.en,
+        services: [category.label.en],
+        description: 'Placeholder project. Content coming soon.',
+        translations: {
+          sk: {
+            title: `Projekt ${n}`,
+            category: category.label.sk,
+            role: category.label.sk,
+            services: [category.label.sk],
+            description: 'Placeholder projekt. Obsah čoskoro.',
+          },
+        },
+        image: null,
+      }
+    })
+  )
+
+// Zoradené podľa poradia kategórií
+export const projects = projectCategories.flatMap((category) =>
+  [...realProjects, ...placeholders].filter((p) => p.group === category.id)
+)

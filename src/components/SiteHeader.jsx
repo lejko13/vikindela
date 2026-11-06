@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import SiteLogo from './SiteLogo'
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false)
@@ -37,15 +38,15 @@ export default function SiteHeader() {
       <button
         type="button"
         onClick={() => setLanguage('sk')}
-        className={language === 'sk' ? 'opacity-100' : 'opacity-25'}
+        className={language === 'sk' ? 'text-ink' : 'text-pink-light'}
       >
         SK
       </button>
-      <span className="opacity-25">/</span>
+      <span className="text-pink-light">/</span>
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={language === 'en' ? 'opacity-100' : 'opacity-25'}
+        className={language === 'en' ? 'text-ink' : 'text-pink-light'}
       >
         EN
       </button>
@@ -65,9 +66,10 @@ export default function SiteHeader() {
         <Link
           to="/"
           onClick={() => setOpen(false)}
-          className="text-[28px] font-black leading-[.8] tracking-[-.065em] md:text-[clamp(28px,2.55vw,48px)]"
+          aria-label="VIKINDELA"
+          className="-my-[6px] block shrink-0 transition-opacity hover:opacity-70 md:-my-[10px]"
         >
-          vikindela
+          <SiteLogo />
         </Link>
 
         <div className="flex shrink-0 items-center gap-3 md:gap-[18px]">
@@ -77,7 +79,7 @@ export default function SiteHeader() {
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
             aria-controls="site-menu"
-            className="w-[72px] shrink-0 text-right text-[13px] font-black tracking-[-.045em] md:w-[96px] md:text-[clamp(13px,1.2vw,18px)]"
+            className="w-[72px] shrink-0 text-right transition-colors hover:text-pink text-[13px] font-black tracking-[-.045em] md:w-[96px] md:text-[clamp(13px,1.2vw,18px)]"
           >
             {open ? t.close : t.menu}
           </button>
@@ -95,11 +97,11 @@ export default function SiteHeader() {
         aria-hidden={!open}
       >
         <nav className="absolute left-[14px] bottom-[76px] flex flex-col items-start gap-1 md:left-6 md:bottom-[92px]">
-          <Link to="/" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-opacity hover:opacity-45 md:text-[clamp(36px,6.2vw,108px)]">{t.home}</Link>
-          <Link to="/all" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-opacity hover:opacity-45 md:text-[clamp(36px,6.2vw,108px)]">{t.all}</Link>
-          <Link to="/contact" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-opacity hover:opacity-45 md:text-[clamp(36px,6.2vw,108px)]">{t.contact}</Link>
-          <button type="button" onClick={() => goHomeView('globe')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-opacity hover:opacity-45 md:text-[clamp(36px,6.2vw,108px)]">{t.globe}</button>
-          <button type="button" onClick={() => goHomeView('list')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-opacity hover:opacity-45 md:text-[clamp(36px,6.2vw,108px)]">{t.list}</button>
+          <Link to="/" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.home}</Link>
+          <Link to="/all" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.all}</Link>
+          <Link to="/contact" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.contact}</Link>
+          <button type="button" onClick={() => goHomeView('globe')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.globe}</button>
+          <button type="button" onClick={() => goHomeView('list')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.list}</button>
         </nav>
       </div>
     </>
