@@ -353,6 +353,8 @@ export default function Home({ introDelay = 0 }) {
       </div>
 
       <div className={`absolute inset-0 transition-all duration-500 ${loading ? 'translate-y-2.5 opacity-0' : 'translate-y-0 opacity-100'}`}>
+        {/* Pozadie: kresba čiarami (public/background-lines.png – priehľadné PNG bez zeleného podkladu) */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[url('/background-lines.png')] bg-cover bg-center bg-no-repeat" />
         <SiteHeader />
 
         {/* Nadpis je skrytý (vizuálne odstránený), ostáva len pre vyhľadávače a čítačky obrazovky */}
