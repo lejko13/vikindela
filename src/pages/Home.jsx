@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
 import SiteLogo from '../components/SiteLogo'
-import { projects, projectCategories } from '../data/projects'
+import { projects, projectCategories, categoryById } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 
 const DESKTOP_DISPLAY_COUNT = 30
@@ -29,7 +29,7 @@ function makeSphereNodes(radius, count) {
   const categoryPool = projectCategories.map((c) => {
     const items = projects.filter((p) => p.group === c.id)
     const pool = items.flatMap((p) => {
-      const sources = [p.image, ...(p.gallery || [])].filter(Boolean)
+      const sources = [p.image, ...(p.gallery || []).map((photo) => photo.src)].filter(Boolean)
       const unique = [...new Set(sources)]
       return unique.length ? unique.map((src) => ({ ...p, image: src })) : [p]
     })
@@ -293,13 +293,27 @@ export default function Home({ introDelay = 0 }) {
 
         {view === 'globe' ? (
           <div className="absolute left-1/2 top-[51%] z-10 h-0 w-0 md:top-1/2">
-            {visualNodes.map((node) => (
-              <Link key={node.key} to={destinationForIndex(node.index, nodes.length)} onClick={openProject}
-                className="pink-hover absolute left-0 top-0 cursor-pointer overflow-hidden bg-[#e9e9e6]"
-                style={{ width: node.width, height: node.height, opacity: node.opacity, zIndex: Math.round(node.depth * 1000), transform: `translate3d(${node.p.x}px,${node.p.y}px,0) translate(-50%,-50%)` }}>
-                <ProjectImage project={node.project} alt={localized(node.project, language).title} className="pointer-events-none h-full w-full" imgClassName="object-cover" />
-              </Link>
-            ))}
+            {visualNodes.map((node) => {
+              const project = localized(node.project, language)
+              const category = categoryById[project.group]
+              return (
+                <Link key={node.key} to={destinationForIndex(node.index, nodes.length)} onClick={openProject}
+                  className="group absolute left-0 top-0 cursor-pointer"
+                  style={{ width: node.width, height: node.height, opacity: node.opacity, zIndex: Math.round(node.depth * 1000), transform: `translate3d(${node.p.x}px,${node.p.y}px,0) translate(-50%,-50%)` }}>
+                  <div className="pink-hover relative h-full w-full overflow-hidden bg-[#e9e9e6]">
+                    <ProjectImage project={project} alt={project.title} className="pointer-events-none h-full w-full" imgClassName="object-cover" showLabel={false} />
+                  </div>
+                  {/* Popisok pod kartičkou: kategória + názov projektu. Zadné (vyblednuté) kartičky ho nemajú, aby guľa nebola preplnená. */}
+                  {node.depth > 0.45 && (
+                    <span className="pointer-events-none absolute left-0 top-[calc(100%+3px)] bg-paper px-[3px] py-[2px] font-black uppercase leading-[1.08] tracking-[-.02em] text-pink-strong"
+                      style={{ fontSize: Math.max(9, Math.min(13, node.width * 0.095)) }}>
+                      <span className="block whitespace-nowrap">{category?.label[language] || category?.label.en}</span>
+                      <span className="block whitespace-nowrap text-pink-strong/65">{project.placeholder ? t.comingSoon : project.title}</span>
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
           </div>
         ) : (
           <section ref={listRef} className="no-scrollbar absolute left-0 right-0 top-1/2 z-[1200] -translate-y-1/2 overflow-x-auto overflow-y-hidden px-0 py-6 [touch-action:pan-x]">

@@ -13,8 +13,10 @@ export const categoryById = Object.fromEntries(projectCategories.map((c) => [c.i
 // REÁLNE PROJEKTY
 // Polia projektu:
 //   image   – náhľad (globus, zoznam, ALL). Pri videu je to obrázok z videa.
-//   video   – (voliteľné) .mp4 v /public, zobrazí sa na detaile projektu
-//   gallery – (voliteľné) zoznam fotiek na detaile projektu
+//   video   – (voliteľné) .mp4 v /public, zobrazí sa na detaile projektu a spustí sa samo
+//   poster  – prvý snímok videa (rovnaký pomer strán, aby video pri spustení neposkočilo)
+//   videoSize – [šírka, výška] videa v pixeloch
+//   gallery – (voliteľné) zoznam fotiek { src, width, height } na detaile projektu
 //   credits – (voliteľné) zoznam [rola, meno] na detaile projektu
 // ─────────────────────────────────────────────────────────────────────────────
 const realProjects = [
@@ -34,6 +36,8 @@ const realProjects = [
     },
     image: '/projects/who-am-i-to-love-you.jpg',
     video: '/projects/who-am-i-to-love-you.mp4',
+    poster: '/projects/who-am-i-to-love-you-poster.jpg',
+    videoSize: [1280, 720],
   },
   {
     slug: 'me-myself-and-others',
@@ -51,6 +55,8 @@ const realProjects = [
     },
     image: '/projects/me-myself-and-others.jpg',
     video: '/projects/me-myself-and-others.mp4',
+    poster: '/projects/me-myself-and-others-poster.jpg',
+    videoSize: [852, 478],
   },
   {
     slug: 'in-my-melancholic-era',
@@ -68,6 +74,8 @@ const realProjects = [
     },
     image: '/projects/in-my-melancholic-era.jpg',
     video: '/projects/in-my-melancholic-era.mp4',
+    poster: '/projects/in-my-melancholic-era-poster.jpg',
+    videoSize: [960, 720],
   },
   {
     slug: 'styling-editorial',
@@ -100,7 +108,11 @@ const realProjects = [
       },
     },
     image: '/projects/styling/styling-06.jpg',
-    gallery: Array.from({ length: 8 }, (_, i) => `/projects/styling/styling-${String(i + 1).padStart(2, '0')}.jpg`),
+    // [súbor, šírka, výška] – rozmery držia na detaile miesto pre fotku ešte pred načítaním
+    gallery: [
+      ['styling-01.jpg', 2000, 1335], ['styling-02.jpg', 1335, 2000], ['styling-03.jpg', 2000, 1335], ['styling-04.jpg', 1335, 2000],
+      ['styling-05.jpg', 2000, 1335], ['styling-06.jpg', 2000, 1335], ['styling-07.jpg', 1335, 2000], ['styling-08.jpg', 1335, 2000],
+    ].map(([file, width, height]) => ({ src: `/projects/styling/${file}`, width, height })),
   },
 ]
 
@@ -115,6 +127,7 @@ const placeholders = projectCategories
       const n = String(i + 1).padStart(2, '0')
       return {
         slug: `${category.id}-${n}`,
+        placeholder: true,
         title: `Project ${n}`,
         group: category.id,
         client: 'Placeholder',
@@ -142,3 +155,10 @@ const placeholders = projectCategories
 export const projects = projectCategories.flatMap((category) =>
   [...realProjects, ...placeholders].filter((p) => p.group === category.id)
 )
+
+// Krátky popis pod kartičkou – o aký projekt ide (osobný, študentský…) a rola. Placeholder = „pripravujeme“.
+// `project` má byť už preložený cez localized(), `t` sú texty webu v danom jazyku.
+export function projectCaption(project, t) {
+  if (project.placeholder) return t.comingSoon
+  return [project.client, project.role].filter((value) => value && value !== '—').join(' · ')
+}

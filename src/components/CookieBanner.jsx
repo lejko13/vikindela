@@ -26,7 +26,7 @@ export default function CookieBanner() {
       </div>
       <div className="flex flex-wrap justify-stretch gap-2 md:justify-end">
         <button onClick={() => choose('necessary')} className="min-h-[38px] flex-1 border border-ink px-3 py-2 text-[10px] font-black transition-colors hover:border-pink hover:text-pink md:flex-none md:text-[11px]">{t.cookiesNecessary}</button>
-        <button onClick={() => choose('all')} className="min-h-[38px] flex-1 border border-ink bg-ink px-3 py-2 text-[10px] font-black text-paper transition-colors hover:border-pink hover:bg-pink hover:text-ink md:flex-none md:text-[11px]">{t.cookiesAccept}</button>
+        <button onClick={() => choose('all')} className="min-h-[38px] flex-1 border border-ink bg-ink px-3 py-2 text-[10px] font-black text-paper transition-colors hover:border-pink-strong hover:bg-pink-strong hover:text-paper md:flex-none md:text-[11px]">{t.cookiesAccept}</button>
       </div>
     </aside>
   )

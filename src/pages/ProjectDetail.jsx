@@ -9,15 +9,16 @@ export default function ProjectDetail() {
   const { language, t } = useLanguage()
   const raw = projects.find(p => p.slug === slug)
 
-  if (!raw) return <main className="min-h-screen bg-paper p-6 pt-28 text-ink"><SiteHeader/><h1 className="text-5xl font-black">404</h1></main>
+  if (!raw) return <main className="min-h-screen bg-paper p-6 pt-28 text-pink-strong"><SiteHeader/><h1 className="text-5xl font-black">404</h1></main>
 
   const project = localized(raw, language)
   const currentIndex = projects.findIndex(p => p.slug === slug)
   const rawNext = projects[(currentIndex + 1) % projects.length]
   const nextProject = localized(rawNext, language)
+  const [videoW, videoH] = project.videoSize || [16, 9]
 
   return (
-    <main className="min-h-screen bg-paper px-3 pt-[92px] pb-10 text-ink md:grid md:grid-cols-[minmax(270px,30vw)_minmax(0,1fr)] md:gap-[42px] md:px-6 md:pt-28 md:pb-[70px]">
+    <main className="min-h-screen bg-paper px-3 pt-[92px] pb-10 text-pink-strong md:grid md:grid-cols-[minmax(270px,30vw)_minmax(0,1fr)] md:gap-[42px] md:px-6 md:pt-28 md:pb-[70px]">
       <SiteHeader />
 
       <aside className="mb-9 w-full text-[14px] font-black md:sticky md:top-28 md:mb-0 md:max-w-[440px] md:self-start md:text-[9px]">
@@ -47,14 +48,19 @@ export default function ProjectDetail() {
 
       <section className="grid min-w-0 gap-3 md:pt-16">
         {project.video ? (
-          <figure className="m-0 overflow-hidden bg-black">
-            <video src={project.video} poster={project.image || undefined} controls playsInline preload="metadata" className="block h-auto w-full md:max-h-[82vh]" />
+          <figure className="m-0">
+            {/* Pevný pomer strán podľa videa – rámik má hneď konečnú veľkosť, takže pri spustení nič neposkočí.
+                Video sa spustí samo (bez zvuku, inak ho prehliadače nepustia); zvuk sa dá zapnúť v ovládaní. */}
+            <div className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: `${videoW} / ${videoH}`, maxWidth: `calc(82vh * ${videoW} / ${videoH})` }}>
+              <video key={project.video} src={project.video} poster={project.poster || project.image || undefined} autoPlay muted playsInline controls preload="auto"
+                className="absolute inset-0 block h-full w-full object-contain" />
+            </div>
             <figcaption className="bg-paper pt-[6px] pb-3 text-[10px] font-black uppercase md:pt-[5px] md:pb-0 md:text-[8px]">01 / {project.title}</figcaption>
           </figure>
         ) : project.gallery?.length ? (
-          project.gallery.map((src, index) => (
+          project.gallery.map(({ src, width, height }, index) => (
             <figure key={src} className={`m-0 overflow-hidden ${index % 3 === 1 ? 'md:ml-[11%] md:w-[78%]' : index % 3 === 2 ? 'md:w-[88%]' : ''}`}>
-              <img src={src} alt={`${project.title} ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} className="block h-auto w-full object-contain md:max-h-[82vh] md:w-auto md:max-w-full" />
+              <img src={src} width={width} height={height} alt={`${project.title} ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} className="block h-auto w-full object-contain md:max-h-[82vh] md:w-auto md:max-w-full" />
               <figcaption className="pt-[6px] pb-3 text-[10px] font-black uppercase md:pt-[5px] md:pb-0 md:text-[8px]">{String(index + 1).padStart(2, '0')} / {project.title}</figcaption>
             </figure>
           ))

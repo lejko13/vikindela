@@ -38,7 +38,7 @@ export default function SiteHeader() {
       <button
         type="button"
         onClick={() => setLanguage('sk')}
-        className={language === 'sk' ? 'text-ink' : 'text-pink-light'}
+        className={language === 'sk' ? 'text-pink-strong' : 'text-pink-light'}
       >
         SK
       </button>
@@ -46,7 +46,7 @@ export default function SiteHeader() {
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={language === 'en' ? 'text-ink' : 'text-pink-light'}
+        className={language === 'en' ? 'text-pink-strong' : 'text-pink-light'}
       >
         EN
       </button>
@@ -97,11 +97,11 @@ export default function SiteHeader() {
         aria-hidden={!open}
       >
         <nav className="absolute left-[14px] bottom-[76px] flex flex-col items-start gap-1 md:left-6 md:bottom-[92px]">
-          <Link to="/" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.home}</Link>
-          <Link to="/all" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.all}</Link>
-          <Link to="/contact" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.contact}</Link>
-          <button type="button" onClick={() => goHomeView('globe')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.globe}</button>
-          <button type="button" onClick={() => goHomeView('list')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.82] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.list}</button>
+          <Link to="/" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.98] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.home}</Link>
+          <Link to="/all" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.98] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.all}</Link>
+          <Link to="/contact" onClick={() => setOpen(false)} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.98] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.contact}</Link>
+          <button type="button" onClick={() => goHomeView('globe')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.98] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.globe}</button>
+          <button type="button" onClick={() => goHomeView('list')} className="text-[clamp(34px,11vw,58px)] font-black uppercase leading-[.98] tracking-[-.07em] transition-colors hover:text-pink md:text-[clamp(36px,6.2vw,108px)]">{t.list}</button>
         </nav>
       </div>
     </>

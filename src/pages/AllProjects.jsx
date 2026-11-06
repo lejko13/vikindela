@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
-import { projectCategories, projects } from '../data/projects'
+import { projectCaption, projectCategories, projects } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 
 export default function AllProjects() {
@@ -16,7 +16,7 @@ export default function AllProjects() {
   }, [location.hash])
 
   return (
-    <main className="min-h-screen bg-paper pt-[84px] text-ink md:pt-28">
+    <main className="min-h-screen bg-paper pt-[84px] text-pink-strong md:pt-28">
       <SiteHeader />
       <header className="block px-[14px] pt-5 pb-11 md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-end md:gap-6 md:px-6 md:pt-0 md:pb-[74px]">
         <span className="mb-[18px] block text-[9px] font-black uppercase md:mb-0 md:text-[11px]">{t.selectedWork}</span>
@@ -27,7 +27,7 @@ export default function AllProjects() {
         {projectCategories.map((category, sectionIndex) => {
           const items = projects.filter(p => p.group === category.id).map(raw => ({ raw, project: localized(raw, language) }))
           return (
-            <section key={category.id} id={category.id} className="px-[14px] py-6 md:min-h-[420px] md:px-6 md:pt-[34px] md:pb-12">
+            <section key={category.id} id={category.id} className="scroll-mt-[58px] px-[14px] py-6 last:min-h-[calc(100svh-58px)] md:scroll-mt-[76px] md:min-h-[420px] md:last:min-h-[calc(100svh-76px)] md:px-6 md:pt-[34px] md:pb-12">
               <div className="mb-5 flex items-start justify-between gap-6 md:mb-[30px]">
                 <div className="flex items-start gap-2.5 md:gap-[18px]">
                   <span className="text-[8px] font-black md:text-[10px]">{String(sectionIndex+1).padStart(2,'0')}</span>
@@ -42,8 +42,9 @@ export default function AllProjects() {
                     <div className="pink-hover relative aspect-[4/5] overflow-hidden bg-[#eee]">
                       <ProjectImage project={project} alt={project.title} className="h-full w-full transition duration-200 group-hover:scale-[1.035]" imgClassName="object-cover" />
                     </div>
-                    <div className="grid grid-cols-[20px_minmax(0,1fr)_30px] items-baseline gap-1 pt-2 transition-colors group-hover:text-pink text-[7px] font-black uppercase md:grid-cols-[26px_minmax(0,1fr)_40px] md:gap-[7px] md:text-[8px]">
-                      <span>{String(index+1).padStart(2,'0')}</span><strong className="truncate text-[8px] md:text-[10px]">{project.title}</strong><span className="text-right">{project.year}</span>
+                    <div className="grid grid-cols-[20px_minmax(0,1fr)_30px] items-baseline gap-x-1 gap-y-[3px] pt-2.5 transition-colors group-hover:text-pink text-[8px] font-black uppercase md:grid-cols-[28px_minmax(0,1fr)_40px] md:gap-x-[7px] md:text-[10px]">
+                      <span>{String(index+1).padStart(2,'0')}</span><strong className="truncate text-[10px] md:text-[13px]">{project.title}</strong><span className="text-right">{project.year}</span>
+                      <span className="col-span-2 col-start-2 truncate text-pink-strong/65 group-hover:text-pink">{projectCaption(project, t)}</span>
                     </div>
                   </Link>
                 ))}

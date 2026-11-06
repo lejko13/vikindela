@@ -9,7 +9,7 @@ export const siteContent = {
     nextProject: 'NEXT PROJECT', client: 'CLIENT', year: 'YEAR', type: 'TYPE', role: 'ROLE', location: 'LOCATION',
     detail: 'DETAIL', campaign: 'CAMPAIGN', loading: 'LOADING', clickHere: 'CLICK HERE', cookiesTitle: 'COOKIES',
     cookiesText: 'We use necessary cookies to remember your language and site preferences. Optional cookies can be enabled later.',
-    cookiesAccept: 'ACCEPT ALL', cookiesNecessary: 'NECESSARY ONLY', projects: 'PROJECTS',
+    cookiesAccept: 'ACCEPT ALL', cookiesNecessary: 'NECESSARY ONLY', projects: 'PROJECTS', comingSoon: 'COMING SOON',
   },
   sk: {
     introLine1: 'MÓDNY DIZAJNÉR', introLine2: 'A KREATÍVNY RIADITEĽ', menu: 'MENU', close: 'ZAVRIEŤ',
@@ -19,14 +19,16 @@ export const siteContent = {
     instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL', nextProject: 'ĎALŠÍ PROJEKT', client: 'KLIENT', year: 'ROK',
     type: 'TYP', role: 'ROLA', location: 'LOKALITA', detail: 'DETAIL', campaign: 'KAMPAŇ', loading: 'NAČÍTAVANIE', clickHere: 'KLIKNI SEM',
     cookiesTitle: 'COOKIES', cookiesText: 'Používame nevyhnutné cookies na zapamätanie jazyka a nastavení webu. Voliteľné cookies môžeš povoliť neskôr.',
-    cookiesAccept: 'PRIJAŤ VŠETKO', cookiesNecessary: 'LEN NEVYHNUTNÉ', projects: 'PROJEKTY',
+    cookiesAccept: 'PRIJAŤ VŠETKO', cookiesNecessary: 'LEN NEVYHNUTNÉ', projects: 'PROJEKTY', comingSoon: 'PRIPRAVUJEME',
   },
 }
 
 export const contactData = {
+  // Na sem chodí správa z formulára. Na stránke sa zatiaľ nezobrazuje (showEmail) – zapni, keď bude schránka hotová.
   email: 'hello@vikindela.com',
-  phoneDisplay: '+421 900 000 000',
-  phoneHref: '+421900000000',
-  instagramLabel: '@vikindela',
-  instagramHref: 'https://instagram.com/vikindela',
+  showEmail: false,
+  phoneDisplay: '+421 918 855 513',
+  phoneHref: '+421918855513',
+  instagramLabel: '@vikindela_',
+  instagramHref: 'https://www.instagram.com/vikindela_/',
 }

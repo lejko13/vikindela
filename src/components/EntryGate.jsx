@@ -8,20 +8,27 @@ export default function EntryGate({ onEnter, leaving = false }) {
 
   return (
     <div
-      className={`entry-gate fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-8 px-6 text-center text-paper ${leaving ? 'is-leaving pointer-events-none' : ''}`}
+      className={`entry-gate fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-8 px-6 text-center text-pink-strong ${leaving ? 'is-leaving pointer-events-none' : ''}`}
       aria-hidden={leaving}
     >
+      {/* Na výšku (mobil, tablet) sa fotka na šírku nezmestí – namiesto nej tri zábery z nej pod sebou:
+          tablet, oči z notebooku, mobil. Na šírku sa ukazuje celá fotka (pozadie .entry-gate). */}
+      <div className="entry-gate__stack" aria-hidden="true">
+        <img src="/entry-tablet.jpg" alt="" loading="lazy" draggable="false" />
+        <img src="/entry-eyes.jpg" alt="" loading="lazy" draggable="false" />
+        <img src="/entry-phone.jpg" alt="" loading="lazy" draggable="false" />
+      </div>
       <img
         src="/vikindela-logo.png"
         alt="VIKINDELA"
-        className="entry-gate__logo w-[86vw] max-w-[720px] md:w-[46vw]"
+        className="entry-gate__logo logo-lift relative w-[86vw] max-w-[720px] md:w-[46vw]"
         draggable="false"
       />
       <button
         type="button"
         onClick={onEnter}
         disabled={leaving}
-        className="entry-gate__button border-2 border-paper px-7 py-3 text-[13px] font-black uppercase tracking-[-.03em] transition hover:border-pink hover:bg-pink hover:text-ink md:text-[15px]"
+        className="entry-gate__button relative border-2 border-pink-strong px-7 py-3 text-[13px] font-black uppercase tracking-[-.03em] transition hover:border-pink hover:bg-pink hover:text-ink md:text-[15px]"
       >
         {t.clickHere}
       </button>

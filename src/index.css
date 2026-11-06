@@ -5,7 +5,8 @@
   --color-paper: #fbfbfa;
   --color-muted: #f5b8ef; /* svetlá ružová — namiesto sivej (neaktívne prvky) */
   --color-pink-light: #f5b8ef;
-  --color-pink: #f5b8ef; /* svetlá ružová — hover efekty a akcenty (pôvodná sýta z loga: #e84cdb) */
+  --color-pink: #f5b8ef; /* svetlá ružová — hover efekty a akcenty */
+  --color-pink-strong: #e84cdb; /* sýta ružová z loga — farba všetkých textov */
   --font-sans: Arial, Helvetica, sans-serif;
 }
 
@@ -13,7 +14,7 @@
 @layer base {
   * { box-sizing: border-box; }
   html, body, #root { margin: 0; min-height: 100%; }
-  html, body { background: #fbfbfa; color: #050505; font-family: var(--font-sans); }
+  html, body { background: #fbfbfa; color: var(--color-pink-strong); font-family: var(--font-sans); }
   body { overflow-x: hidden; }
   button, a { -webkit-tap-highlight-color: transparent; }
   button, input, textarea, select { font: inherit; letter-spacing: inherit; }
@@ -36,6 +37,22 @@
   background-position: center;
 }
 
+/* Na výšku: tri zábery pod sebou namiesto fotky na šírku. Logo s tlačidlom sedia na strednom zábere (oči). */
+.entry-gate__stack { display: none; }
+@media (orientation: portrait) {
+  .entry-gate { background-image: none; padding-top: 20vh; }
+  .entry-gate__stack {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 40fr 33fr 27fr;
+    gap: 6px;
+    background: var(--color-ink);
+  }
+  .entry-gate__stack img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; filter: brightness(.72); }
+  .entry-gate__logo { width: min(86vw, 620px); }
+}
+
 /* Prechod z úvodnej obrazovky na loading:
    1) logo a tlačidlo jemne zmiznú, 2) fotka sa odroluje nahor a odkryje loading pod ňou */
 .entry-gate {
@@ -51,9 +68,16 @@
 .entry-gate.is-leaving .entry-gate__logo { opacity: 0; transform: translateY(-18px) scale(.97); }
 .entry-gate.is-leaving .entry-gate__button { opacity: 0; transform: translateY(-10px); transition-delay: 60ms; }
 
+/* Logo jemne vystúpi z pozadia – dva tiene: ostrý tesne pod ťahmi a mäkký ďalej */
+.logo-lift {
+  filter: drop-shadow(0 1px 1px rgba(70, 0, 60, .22)) drop-shadow(0 4px 8px rgba(70, 0, 60, .18));
+}
+
 /* Ružové hover efekty */
 :focus-visible { outline: 2px solid var(--color-pink); outline-offset: 3px; }
 :focus:not(:focus-visible) { outline: none; }
+/* Pole na správu v kontakte – bez rámika pri písaní, stačí kurzor */
+textarea:focus, textarea:focus-visible { outline: none; }
 
 /* Ružový nádych na obrázkoch projektov pri hoveri (rodič musí mať position relative/absolute) */
 .pink-hover::after {

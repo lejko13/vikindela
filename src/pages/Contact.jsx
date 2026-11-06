@@ -22,9 +22,9 @@ export default function Contact() {
         <h1 className="m-0 max-w-[1200px] text-[clamp(58px,18vw,92px)] font-black leading-[.72] tracking-[-.08em] md:text-[clamp(72px,12vw,210px)]">{t.contactTitle}</h1>
       </section>
 
-      <section className="mt-[90px] grid grid-cols-1 gap-[34px] pt-[18px] md:mt-auto md:grid-cols-[minmax(260px,1.3fr)_repeat(3,minmax(140px,.7fr))] md:gap-8 md:pt-20">
+      <section className={`mt-[90px] grid grid-cols-1 gap-[34px] pt-[18px] md:mt-auto md:gap-8 md:pt-20 ${contactData.showEmail ? 'md:grid-cols-[minmax(260px,1.3fr)_repeat(3,minmax(140px,.7fr))]' : 'md:grid-cols-[minmax(260px,1.3fr)_repeat(2,minmax(140px,.7fr))]'}`}>
         <a href={`tel:${contactData.phoneHref}`} className="text-[clamp(34px,10vw,52px)] font-black leading-[.86] tracking-[-.055em] transition-colors hover:text-pink md:text-[clamp(28px,4vw,70px)] md:whitespace-nowrap">{contactData.phoneDisplay}</a>
-        <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.emailLabel}</span><a href={`mailto:${contactData.email}`} className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.email.toUpperCase()}</a></div>
+        {contactData.showEmail && <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.emailLabel}</span><a href={`mailto:${contactData.email}`} className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.email.toUpperCase()}</a></div>}
         <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.phoneLabel}</span><a href={`tel:${contactData.phoneHref}`} className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.phoneDisplay}</a></div>
         <div className="flex flex-col gap-3"><span className="text-[10px] font-black">{t.instagramLabel}</span><a href={contactData.instagramHref} target="_blank" rel="noreferrer" className="text-[clamp(15px,1.5vw,24px)] font-black tracking-[-.04em] transition-colors hover:text-pink">{contactData.instagramLabel.toUpperCase()}</a></div>
       </section>
@@ -33,7 +33,7 @@ export default function Contact() {
         <label htmlFor="message" className="text-[10px] font-black">{t.messageLabel}</label>
         <textarea id="message" rows="5" required value={message} onChange={e=>setMessage(e.target.value)} placeholder={t.messagePlaceholder}
           className="min-h-[130px] w-full resize-y bg-transparent p-0 pb-[14px] text-[clamp(28px,8vw,42px)] font-black uppercase leading-[.92] tracking-[-.055em] outline-none caret-pink placeholder:text-pink md:min-h-[150px] md:text-[clamp(24px,3.2vw,56px)]" />
-        <button type="submit" className="min-h-11 justify-self-start border-2 border-ink px-[14px] py-[10px] text-xs font-black transition-colors hover:border-pink hover:bg-pink hover:text-ink md:min-w-[100px]">{t.sendMessage}</button>
+        <button type="submit" className="min-h-12 justify-self-start bg-ink px-7 py-3 text-[13px] font-black uppercase tracking-[-.02em] text-paper transition-colors hover:bg-pink-strong md:min-w-[132px] md:text-[15px]">{t.sendMessage}</button>
       </form>
     </main>
   )

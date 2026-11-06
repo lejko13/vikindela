@@ -11,7 +11,7 @@ export default function ProjectImage({ project, alt, className = '', imgClassNam
   return (
     <div role="img" aria-label={alt} className={`relative ${className}`} style={{ backgroundColor: category?.tone || '#e9e9e6' }}>
       {showLabel && (
-        <span className="absolute bottom-[6%] left-[8%] right-[8%] text-[clamp(6px,.62vw,10px)] font-black uppercase leading-[.95] tracking-[-.03em] text-ink/45">
+        <span className="absolute bottom-[6%] left-[8%] max-w-[84%] bg-paper px-[5px] py-[3px] text-[clamp(8px,.72vw,12px)] font-black uppercase leading-[1] tracking-[-.02em] text-pink-strong">
           {category?.label[language] || category?.label.en}
         </span>
       )}
