@@ -114,18 +114,18 @@ textarea:focus, textarea:focus-visible { outline: none; }
   .group:hover .folder__sheet { transform: translateY(-20%); }
 }
 
-/* Žltý pixelový priečinok (FolderCard variant 'pixel') – všetko kreslia SVG na mriežke 30 × 24,
+/* Disko priečinok (FolderCard variant 'disco') – pixelová mriežka 30 × 24,
    tu sa len prepíšu rozmery a farby z modrého priečinka. */
-.folder--pixel svg { display: block; width: 100%; height: 100%; }
-.folder--pixel .folder__sheet {
+.folder--disco .folder__back,
+.folder--disco .folder__front-art { image-rendering: pixelated; object-fit: fill; }
+.folder--disco .folder__front-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.folder--disco svg { display: block; width: 100%; height: 100%; }
+.folder--disco .folder__sheet {
   left: 10%; right: 10%; top: 20.83%; height: 20.83%;
   border-radius: 0; background: none; box-shadow: none;
 }
-.folder--pixel .folder__front {
-  top: 25%; border-radius: 0; background: none; box-shadow: none;
-}
-.folder--pixel .folder__front svg { position: absolute; inset: 0; }
-.folder--pixel .folder__photo {
+.folder--disco .folder__front { top: 25%; border-radius: 0; background: none; box-shadow: none; }
+.folder--disco .folder__photo {
   left: 16.7%; right: 16.7%; top: 16.7%; bottom: 22%;
   border-radius: 0; box-shadow: none; outline: 2px solid #232023;
 }

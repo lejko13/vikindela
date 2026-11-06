@@ -68,8 +68,8 @@ function makeSphereNodes(radius, count) {
       project,
       base: { x: Math.cos(angle) * ring * radius, y: y * radius, z: Math.sin(angle) * ring * radius },
       size: [0.72, 0.96, 1.18, 0.84, 1.08, 0.9][i % 6],
-      // 30 % priečinkov je žltých pixelových (3 z každých 10, rozhádzané po guli)
-      variant: (i * 7) % 10 < 3 ? 'pixel' : 'mac',
+      // 35 % priečinkov je disko pixelových (7 z každých 20, rozhádzané po guli)
+      variant: (i * 7) % 20 < 7 ? 'disco' : 'mac',
     }
   })
 }
