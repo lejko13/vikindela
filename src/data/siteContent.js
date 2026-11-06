@@ -31,10 +31,10 @@ export const contactData = {
 }
 
 // Stránka O MNE (/about). Texty prepíš tu – v oboch jazykoch.
-// `photo` – portrét (napr. '/about-portrait.jpg' v /public); kým je null, ukáže sa šedý rámik.
+// `photo` – fotka (súbor v /public), ukáže sa v celom svojom pomere strán; kým je null, ukáže sa šedý rámik.
 // `sections` – bloky pod textom (štúdium, skúsenosti…); každý má nadpis a riadky. Blok môžeš pridať aj zmazať.
 export const aboutData = {
-  photo: '/about-portrait.jpg',
+  photo: '/about-photo.jpg',
   en: {
     name: 'VIKTÓRIA KUBINCOVÁ',
     bio: 'A SHORT TEXT ABOUT ME IS COMING SOON – WHO I AM, WHAT I DO AND WHAT DRIVES MY WORK.',

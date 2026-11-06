@@ -52,7 +52,7 @@ export default function About() {
 
         <figure className="m-0 md:sticky md:top-28 md:self-start">
           {aboutData.photo
-            ? <img src={aboutData.photo} alt={about.name} className="block aspect-square w-full object-cover" />
+            ? <img src={aboutData.photo} alt={about.name} className="block h-auto w-full" />
             : <div role="img" aria-label={about.name} className="aspect-square w-full bg-[#d9d9d4]" />}
         </figure>
       </div>
