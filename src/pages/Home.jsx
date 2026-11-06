@@ -12,7 +12,8 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 // Guľa sa sama pomaly otáča sprava doľava (radiány za sekundu). Pri ťahaní, scrollovaní
 // alebo keď je myš na kartičke zastane a po chvíli sa plynulo rozbehne znova.
 const AUTO_ROTATE_SPEED = 0.1
-const AUTO_ROTATE_RESUME_MS = 1400
+const AUTO_ROTATE_RESUME_MS = 250
+const AUTO_ROTATE_EASE_MS = 250 // ako rýchlo sa rozbehne / zastane
 // Guľa sa dá chytiť a ťahať len v kruhu okolo nej (násobok polomeru gule), nie po celej stránke.
 const DRAG_ARENA_SCALE = 1.4
 
@@ -158,7 +159,7 @@ export default function Home({ introDelay = 0 }) {
         speed = 0
       } else {
         const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
-        speed += ((idle ? AUTO_ROTATE_SPEED : 0) - speed) * Math.min(1, dt / 700)
+        speed += ((idle ? AUTO_ROTATE_SPEED : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
         if (speed > 0.0005) {
           const next = { x: rotationRef.current.x, y: rotationRef.current.y - (speed * dt) / 1000 }
           rotationRef.current = next
