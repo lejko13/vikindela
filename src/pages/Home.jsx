@@ -14,6 +14,8 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 const AUTO_ROTATE_SPEED = 0.14
 const AUTO_ROTATE_RESUME_MS = 250
 const AUTO_ROTATE_EASE_MS = 250 // ako rýchlo sa rozbehne / zastane
+// Zoznam (LIST) sa sám posúva sprava doľava o toľko rýchlejšie než predná strana gule
+const LIST_SPEED_FACTOR = 1.2
 // Guľa sa dá chytiť a ťahať len v kruhu okolo nej (násobok polomeru gule), nie po celej stránke.
 const DRAG_ARENA_SCALE = 1.4
 
@@ -181,6 +183,42 @@ export default function Home({ introDelay = 0 }) {
     return Math.max(isMobile ? 112 : 220, Math.min(byHeight, byWidth, isMobile ? 182 : 430))
   }, [viewport, isMobile])
 
+  // Zoznam sa posúva sám – obsahuje projekty trikrát za sebou (aj na širokom monitore je čo posúvať), takže keď prejde jednu sadu,
+  // nenápadne skočí späť o jej šírku a ide dookola. Pri hoveri, scrollovaní alebo ťahaní prstom zastane.
+  useEffect(() => {
+    if (loading || view !== 'list') return
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const el = listRef.current
+    if (!el) return
+    hoveringCardRef.current = false
+    const pxPerSecond = radius * AUTO_ROTATE_SPEED * LIST_SPEED_FACTOR
+    let raf
+    let last = performance.now()
+    let speed = 0
+    let pos = el.scrollLeft
+    const tick = (now) => {
+      const dt = Math.min(50, now - last)
+      last = now
+      // Používateľ posunul zoznam sám (prst, trackpad) – pokračuj od jeho pozície
+      if (Math.abs(el.scrollLeft - pos) > 2) {
+        pos = el.scrollLeft
+        lastInteractionRef.current = now
+      }
+      const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
+      speed += ((idle ? pxPerSecond : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
+      if (speed > 0.05) {
+        const row = el.firstElementChild
+        const loopWidth = row.children[projects.length].offsetLeft - row.children[0].offsetLeft
+        pos += (speed * dt) / 1000
+        if (pos >= loopWidth) pos -= loopWidth
+        el.scrollLeft = pos
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [loading, view, radius])
+
   // Optimization applies ONLY to GLOBE.
   // Desktop keeps 30 visual nodes, phones render only 10.
   // LIST below still maps the complete `projects` array unchanged.
@@ -217,7 +255,10 @@ export default function Home({ introDelay = 0 }) {
       if (event.ctrlKey) return
       event.preventDefault(); event.stopPropagation()
       if (view === 'globe') rotateFromWheel(event)
-      else if (listRef.current) listRef.current.scrollLeft += event.deltaX + event.deltaY
+      else if (listRef.current) {
+        lastInteractionRef.current = performance.now()
+        listRef.current.scrollLeft += event.deltaX + event.deltaY
+      }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
@@ -364,8 +405,11 @@ export default function Home({ introDelay = 0 }) {
         ) : (
           <section ref={listRef} className="no-scrollbar absolute left-0 right-0 top-1/2 z-[1200] -translate-y-1/2 overflow-x-auto overflow-y-hidden px-0 py-6 [touch-action:pan-x]">
             <div className="flex w-max min-w-full items-center gap-4 px-4 md:gap-[27px] md:px-[30px]">
-              {[...projects, ...projects].map((project, index) => (
-                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`} className="pink-hover group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
+              {[...projects, ...projects, ...projects].map((project, index) => (
+                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`}
+                  onMouseEnter={() => { hoveringCardRef.current = true }}
+                  onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
+                  className="pink-hover group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
                   <ProjectImage project={project} alt={localized(project, language).title} className="h-full w-full transition group-hover:scale-[1.035]" imgClassName="object-cover" />
                   <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase opacity-0 transition-opacity group-hover:opacity-100" style={{ color: categoryById[project.group]?.color }}>{localized(project, language).title}</span>
                 </Link>
