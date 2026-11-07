@@ -84,6 +84,28 @@ const realProjects = [
     videoSize: [960, 720],
   },
   {
+    slug: 'slovakia-futura',
+    title: 'SLOVAKIA FUTURA',
+    group: 'art-directing',
+    client: '—',
+    year: '—',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'ART DIRECTOR',
+    services: ['ART DIRECTING'],
+    description: '',
+    translations: {
+      sk: { description: '' },
+    },
+    image: '/projects/slovakia-futura/slovakia-futura-01.jpg',
+    // [súbor, šírka, výška]; `medium` je 1000 px verzia (public/projects/slovakia-futura/1000)
+    gallery: [
+      ['slovakia-futura-01.jpg', 1902, 2000], ['slovakia-futura-02.jpg', 2000, 1795], ['slovakia-futura-03.jpg', 1558, 2000],
+      ['slovakia-futura-04.jpg', 2000, 1506], ['slovakia-futura-05.jpg', 1453, 2000], ['slovakia-futura-06.jpg', 1500, 2000],
+      ['slovakia-futura-07.jpg', 1624, 2000],
+    ].map(([file, width, height]) => ({ src: `/projects/slovakia-futura/${file}`, medium: `/projects/slovakia-futura/1000/${file}`, width, height })),
+  },
+  {
     slug: 'styling-editorial',
     title: 'EDITORIAL',
     group: 'styling',
