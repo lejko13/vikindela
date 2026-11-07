@@ -1,10 +1,25 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
-import AllProjects from './pages/AllProjects'
-import Contact from './pages/Contact'
-import About from './pages/About'
-import ProjectDetail from './pages/ProjectDetail'
+
+// Ostatné stránky sa načítajú zvlášť – prvá návšteva stiahne menej kódu. Hneď ako je web v pokoji,
+// stiahnu sa na pozadí, takže preklik na ne je potom okamžitý.
+const loadAllProjects = () => import('./pages/AllProjects')
+const loadContact = () => import('./pages/Contact')
+const loadAbout = () => import('./pages/About')
+const loadProjectDetail = () => import('./pages/ProjectDetail')
+const AllProjects = lazy(loadAllProjects)
+const Contact = lazy(loadContact)
+const About = lazy(loadAbout)
+const ProjectDetail = lazy(loadProjectDetail)
+
+function usePrefetchPages() {
+  useEffect(() => {
+    const prefetch = () => { loadAllProjects(); loadContact(); loadAbout(); loadProjectDetail() }
+    const id = 'requestIdleCallback' in window ? requestIdleCallback(prefetch, { timeout: 3000 }) : setTimeout(prefetch, 1500)
+    return () => ('cancelIdleCallback' in window ? cancelIdleCallback(id) : clearTimeout(id))
+  }, [])
+}
 import CookieBanner from './components/CookieBanner'
 import EntryGate, { ENTRY_EXIT_MS } from './components/EntryGate'
 
@@ -22,6 +37,7 @@ function useScrollToTopOnPageChange() {
 
 export default function App() {
   useScrollToTopOnPageChange()
+  usePrefetchPages()
   // 'gate' = úvodná obrazovka, 'leaving' = prechod (web sa už načítava pod ňou), 'done' = úvod je preč
   // Úvod sa ukáže len raz za návštevu — po kliknutí si to zapamätáme (aj pri obnovení stránky).
   const [stage, setStage] = useState(() => {
@@ -43,13 +59,15 @@ export default function App() {
     <>
       {stage !== 'gate' && (
         <>
-          <Routes>
-            <Route path="/" element={<Home introDelay={stage === 'leaving' ? ENTRY_EXIT_MS * 0.6 : 0} />} />
-            <Route path="/all" element={<AllProjects />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/work/:slug" element={<ProjectDetail />} />
-          </Routes>
+          <Suspense fallback={<main className="min-h-screen bg-paper" />}>
+            <Routes>
+              <Route path="/" element={<Home introDelay={stage === 'leaving' ? ENTRY_EXIT_MS * 0.6 : 0} />} />
+              <Route path="/all" element={<AllProjects />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/work/:slug" element={<ProjectDetail />} />
+            </Routes>
+          </Suspense>
           <CookieBanner />
         </>
       )}

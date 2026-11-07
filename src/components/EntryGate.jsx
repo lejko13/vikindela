@@ -32,29 +32,32 @@ export default function EntryGate({ onEnter, leaving = false }) {
 
   return (
     <div
-      className={`entry-gate fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-8 px-6 text-center text-pink-strong ${leaving ? 'is-leaving pointer-events-none' : ''}`}
+      className={`entry-gate fixed inset-0 z-[99999] overflow-hidden ${leaving ? 'is-leaving pointer-events-none' : ''}`}
       aria-hidden={leaving}
     >
-      {/* Na šírku video na šírku, na výšku (mobil, tablet) to isté video natočené na výšku */}
-      {portrait ? (
-        <LoopVideo key="portrait" src="/entry-portrait.mp4" poster="/entry-portrait.jpg" play={play} className="entry-gate__video" />
-      ) : (
-        <LoopVideo key="landscape" src="/entry-video.mp4" poster="/entry-photo.jpg" play={play} className="entry-gate__video" />
-      )}
-      <img
-        src="/vikindela-logo.png"
-        alt="VIKINDELA"
-        className="entry-gate__logo logo-lift relative w-[86vw] max-w-[720px] md:w-[46vw]"
-        draggable="false"
-      />
-      <button
-        type="button"
-        onClick={onEnter}
-        disabled={leaving}
-        className="entry-gate__button relative border-2 border-pink-strong px-7 py-3 text-[13px] font-black uppercase tracking-[-.03em] transition hover:border-pink hover:bg-pink hover:text-ink md:text-[15px]"
-      >
-        {t.clickHere}
-      </button>
+      <div className="entry-gate__inner absolute inset-0 flex flex-col items-center justify-center gap-8 px-6 text-center text-pink-strong">
+        {/* Na šírku video na šírku, na výšku (mobil, tablet) to isté video natočené na výšku */}
+        {portrait ? (
+          <LoopVideo key="portrait" src="/entry-portrait.mp4" poster="/entry-portrait.jpg" play={play} className="entry-gate__video" />
+        ) : (
+          <LoopVideo key="landscape" src="/entry-video.mp4" poster="/entry-photo.jpg" play={play} className="entry-gate__video" />
+        )}
+        <div className="entry-gate__shade" aria-hidden="true" />
+        <img
+          src="/vikindela-logo.webp"
+          alt="VIKINDELA"
+          className="entry-gate__logo logo-lift relative w-[86vw] max-w-[720px] md:w-[46vw]"
+          draggable="false"
+        />
+        <button
+          type="button"
+          onClick={onEnter}
+          disabled={leaving}
+          className="entry-gate__button relative border-2 border-pink-strong px-7 py-3 text-[13px] font-black uppercase tracking-[-.03em] transition hover:border-pink hover:bg-pink hover:text-ink md:text-[15px]"
+        >
+          {t.clickHere}
+        </button>
+      </div>
     </div>
   )
 }

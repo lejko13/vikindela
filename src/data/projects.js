@@ -11,6 +11,10 @@ export const projectCategories = [
 
 export const categoryById = Object.fromEntries(projectCategories.map((c) => [c.id, c]))
 
+// Zmenšená verzia fotky (public/projects/thumbs, max 520 px) – na guľu, zoznam a kartičky v ALL,
+// kde sa fotka ukazuje malá. Plná fotka sa načíta až na detaile projektu.
+export const thumbFor = (src) => (src?.startsWith('/projects/') ? src.replace('/projects/', '/projects/thumbs/') : src)
+
 // ─────────────────────────────────────────────────────────────────────────────
 // REÁLNE PROJEKTY
 // Polia projektu:
@@ -110,11 +114,12 @@ const realProjects = [
       },
     },
     image: '/projects/styling/styling-06.jpg',
-    // [súbor, šírka, výška] – rozmery držia na detaile miesto pre fotku ešte pred načítaním
+    // [súbor, šírka, výška] – rozmery držia na detaile miesto pre fotku ešte pred načítaním.
+    // `medium` je 1000 px verzia (public/projects/styling/1000) – menšie obrazovky si stiahnu ju namiesto originálu.
     gallery: [
       ['styling-01.jpg', 2000, 1335], ['styling-02.jpg', 1335, 2000], ['styling-03.jpg', 2000, 1335], ['styling-04.jpg', 1335, 2000],
       ['styling-05.jpg', 2000, 1335], ['styling-06.jpg', 2000, 1335], ['styling-07.jpg', 1335, 2000], ['styling-08.jpg', 1335, 2000],
-    ].map(([file, width, height]) => ({ src: `/projects/styling/${file}`, width, height })),
+    ].map(([file, width, height]) => ({ src: `/projects/styling/${file}`, medium: `/projects/styling/1000/${file}`, width, height })),
   },
 ]
 

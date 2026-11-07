@@ -30,29 +30,35 @@
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
-.entry-gate {
+.entry-gate__inner {
   background-color: var(--color-ink);
   background-image: linear-gradient(rgba(5, 5, 5, .35), rgba(5, 5, 5, .35)), url('/entry-photo.jpg');
   background-size: cover;
   background-position: center;
 }
 
-/* Na šírku: video cez celú obrazovku, stmavené rovnako ako predtým fotka (pozadie ostáva, kým sa video nenačíta) */
-.entry-gate__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); }
+/* Video cez celú obrazovku. Stmavenie robí tmavá vrstva nad ním (lacnejšie než filter na hrajúcom videu). */
+.entry-gate__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.entry-gate__shade { position: absolute; inset: 0; background: rgba(5, 5, 5, .35); }
 
-/* Na výšku: video natočené na výšku (pozadie .entry-gate sa nepoužije, je na šírku) */
+/* Na výšku: video natočené na výšku (pozadie s fotkou na šírku sa nepoužije) */
 @media (orientation: portrait) {
-  .entry-gate { background-image: none; }
+  .entry-gate__inner { background-image: none; }
   .entry-gate__logo { width: min(86vw, 620px); }
 }
 
 /* Prechod z úvodnej obrazovky na loading:
-   1) logo a tlačidlo jemne zmiznú, 2) fotka sa odroluje nahor a odkryje loading pod ňou */
-.entry-gate {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 800ms cubic-bezier(.76, 0, .24, 1) 300ms;
+   1) logo a tlačidlo jemne zmiznú, 2) obrazovka sa odroluje nahor a odkryje loading pod ňou.
+   Odrolovanie = vonkajší rám ide hore a obsah v ňom rovnako rýchlo dole, takže obsah stojí a posúva sa len
+   spodná hrana. Sú to len posuny (transform) – robí ich grafická karta, preto je to plynulé aj s videom. */
+.entry-gate,
+.entry-gate__inner {
+  transform: translate3d(0, 0, 0);
+  transition: transform 800ms cubic-bezier(.76, 0, .24, 1) 300ms;
+  will-change: transform;
 }
-.entry-gate.is-leaving { clip-path: inset(0 0 100% 0); }
+.entry-gate.is-leaving { transform: translate3d(0, -100%, 0); }
+.entry-gate.is-leaving .entry-gate__inner { transform: translate3d(0, 100%, 0); }
 
 .entry-gate__logo,
 .entry-gate__button {

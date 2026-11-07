@@ -60,9 +60,10 @@ export default function ProjectDetail() {
             <figcaption className="bg-paper pt-[6px] pb-3 text-[10px] font-black uppercase md:pt-[5px] md:pb-0 md:text-[8px]">01 / {project.title}</figcaption>
           </figure>
         ) : project.gallery?.length ? (
-          project.gallery.map(({ src, width, height }, index) => (
+          project.gallery.map(({ src, medium, width, height }, index) => (
             <figure key={src} className={`m-0 overflow-hidden ${index % 3 === 1 ? 'md:ml-[11%] md:w-[78%]' : index % 3 === 2 ? 'md:w-[88%]' : ''}`}>
-              <img src={src} width={width} height={height} alt={`${project.title} ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} className="block h-auto w-full object-contain md:max-h-[82vh] md:w-auto md:max-w-full" />
+              <img src={src} srcSet={medium ? `${medium} 1000w, ${src} ${Math.max(width, height)}w` : undefined} sizes="(min-width: 768px) 62vw, 100vw"
+                width={width} height={height} alt={`${project.title} ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" className="block h-auto w-full object-contain md:max-h-[82vh] md:w-auto md:max-w-full" />
               <figcaption className="pt-[6px] pb-3 text-[10px] font-black uppercase md:pt-[5px] md:pb-0 md:text-[8px]">{String(index + 1).padStart(2, '0')} / {project.title}</figcaption>
             </figure>
           ))

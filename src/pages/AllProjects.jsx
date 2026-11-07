@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
-import { projectCaption, projectCategories, projects } from '../data/projects'
+import { projectCaption, projectCategories, projects, thumbFor } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 
 export default function AllProjects() {
@@ -40,7 +40,7 @@ export default function AllProjects() {
                 {items.map(({ raw, project }, index) => (
                   <Link to={`/work/${raw.slug}`} key={raw.slug} className="group block w-[132px] shrink-0 md:w-[clamp(150px,11.5vw,220px)]">
                     <div className="pink-hover relative aspect-[4/5] overflow-hidden bg-[#eee]">
-                      <ProjectImage project={project} alt={project.title} className="h-full w-full transition duration-200 group-hover:scale-[1.035]" imgClassName="object-cover" />
+                      <ProjectImage project={{ ...project, image: thumbFor(project.image) }} alt={project.title} className="h-full w-full transition duration-200 group-hover:scale-[1.035]" imgClassName="object-cover" />
                     </div>
                     <div className="grid grid-cols-[20px_minmax(0,1fr)_30px] items-baseline gap-x-1 gap-y-[3px] pt-2.5 transition-opacity group-hover:opacity-60 text-[8px] font-black uppercase md:grid-cols-[28px_minmax(0,1fr)_40px] md:gap-x-[7px] md:text-[10px]">
                       <span>{String(index+1).padStart(2,'0')}</span><strong className="truncate text-[10px] md:text-[13px]">{project.title}</strong><span className="text-right">{project.year}</span>

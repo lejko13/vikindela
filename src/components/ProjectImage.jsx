@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext'
 export default function ProjectImage({ project, alt, className = '', imgClassName = '', showLabel = true }) {
   const { language } = useLanguage()
   if (project?.image) {
-    return <img draggable="false" src={project.image} alt={alt} className={`${className} ${imgClassName}`} />
+    return <img draggable="false" src={project.image} alt={alt} loading="lazy" decoding="async" className={`${className} ${imgClassName}`} />
   }
   const category = categoryById[project?.group]
   return (

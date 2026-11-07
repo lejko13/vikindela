@@ -4,7 +4,7 @@ import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
 import FolderCard from '../components/FolderCard'
 import SiteLogo from '../components/SiteLogo'
-import { projects, projectCategories, categoryById } from '../data/projects'
+import { projects, projectCategories, categoryById, thumbFor } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
 
 const DESKTOP_DISPLAY_COUNT = 30
@@ -26,8 +26,6 @@ const FOLDER_RATIO = 1.25
 // Po kliknutí sa priečinok najprv otvorí, až potom sa prejde na kategóriu
 const FOLDER_OPEN_MS = 320
 
-// Na guli sa používajú zmenšené fotky (public/projects/thumbs), aby sa točila plynulo
-const thumbFor = (src) => (src?.startsWith('/projects/') ? src.replace('/projects/', '/projects/thumbs/') : src)
 
 // Guľa je rozdelená na 4 pásy (zhora nadol) — jeden pás = jedna kategória.
 // Klik na ktorýkoľvek obrázok v páse ťa hodí na danú kategóriu na stránke ALL.
@@ -100,6 +98,8 @@ export default function Home({ introDelay = 0 }) {
   const captionElsRef = useRef([])
   const homeRef = useRef(null)
   const listRef = useRef(null)
+  const listRowRef = useRef(null)
+  const listMotionRef = useRef({ pos: 0, velocity: 0, dragging: false, moved: false })
   const dragRef = useRef({ active: false, moved: false, pointerId: null, x: 0, y: 0 })
   const suppressClickRef = useRef(false)
   const globeCenterRef = useRef(null)
@@ -161,40 +161,75 @@ export default function Home({ introDelay = 0 }) {
   }, [viewport, isMobile])
 
   // Zoznam sa posúva sám – obsahuje projekty trikrát za sebou (aj na širokom monitore je čo posúvať), takže keď prejde jednu sadu,
-  // nenápadne skočí späť o jej šírku a ide dookola. Pri hoveri, scrollovaní alebo ťahaní prstom zastane.
+  // nenápadne skočí späť o jej šírku a ide dookola. Posúva sa cez transform (grafická karta), nie cez scroll –
+  // je to plynulé aj v Safari. Koliesko, ťahanie myšou/prstom so zotrvačnosťou; pri hoveri zastane.
   useEffect(() => {
     if (loading || view !== 'list') return
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const el = listRef.current
-    if (!el) return
+    const row = listRowRef.current
+    if (!el || !row) return
     hoveringCardRef.current = false
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
     const pxPerSecond = radius * AUTO_ROTATE_SPEED * LIST_SPEED_FACTOR
-    const row = el.firstElementChild
     const loopWidth = row.children[projects.length].offsetLeft - row.children[0].offsetLeft
     let raf
     let last = performance.now()
     let speed = 0
-    let pos = el.scrollLeft
+    let shown = NaN
     const tick = (now) => {
       const dt = Math.min(50, now - last)
       last = now
-      // Používateľ posunul zoznam sám (prst, trackpad) – pokračuj od jeho pozície
-      if (Math.abs(el.scrollLeft - pos) > 2) {
-        pos = el.scrollLeft
-        lastInteractionRef.current = now
-      }
-      const idle = !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
-      speed += ((idle ? pxPerSecond : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
-      if (speed > 0.05) {
-        pos += (speed * dt) / 1000
-        if (pos >= loopWidth) pos -= loopWidth
-        el.scrollLeft = pos
+      const list = listMotionRef.current
+      if (!list.dragging) {
+        // zotrvačnosť po pustení
+        if (Math.abs(list.velocity) > 0.01) {
+          list.pos += list.velocity * dt
+          list.velocity *= Math.pow(0.94, dt / 16.67)
+          lastInteractionRef.current = now
+        } else list.velocity = 0
+        const idle = !reduced && !hoveringCardRef.current && now - lastInteractionRef.current > AUTO_ROTATE_RESUME_MS
+        speed += ((idle ? pxPerSecond : 0) - speed) * Math.min(1, dt / AUTO_ROTATE_EASE_MS)
+        list.pos += (speed * dt) / 1000
+      } else speed = 0
+      list.pos = ((list.pos % loopWidth) + loopWidth) % loopWidth
+      if (list.pos !== shown) {
+        row.style.transform = `translate3d(${(-list.pos).toFixed(2)}px,0,0)`
+        shown = list.pos
       }
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [loading, view, radius])
+
+  const startListDrag = (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return
+    listMotionRef.current = { ...listMotionRef.current, dragging: true, moved: false, x: event.clientX, lastX: event.clientX, lastT: performance.now(), velocity: 0, pointerId: event.pointerId }
+  }
+  const moveListDrag = (event) => {
+    const list = listMotionRef.current
+    if (!list.dragging || list.pointerId !== event.pointerId) return
+    const dx = event.clientX - list.lastX
+    if (!list.moved && Math.abs(event.clientX - list.x) > 6) list.moved = true
+    if (list.moved) {
+      const now = performance.now()
+      list.pos -= dx
+      list.velocity = -dx / Math.max(1, now - list.lastT)
+      list.lastT = now
+      lastInteractionRef.current = now
+    }
+    list.lastX = event.clientX
+  }
+  const endListDrag = (event) => {
+    const list = listMotionRef.current
+    if (!list.dragging || list.pointerId !== event.pointerId) return
+    list.dragging = false
+    if (list.moved) {
+      suppressClickRef.current = true
+      setTimeout(() => { suppressClickRef.current = false }, 0)
+    }
+    lastInteractionRef.current = performance.now()
+  }
 
   // Desktop má 30 priečinkov, mobil 20. LIST nižšie ukazuje všetky projekty.
   const globeDisplayCount = isMobile ? MOBILE_DISPLAY_COUNT : DESKTOP_DISPLAY_COUNT
@@ -211,6 +246,8 @@ export default function Home({ introDelay = 0 }) {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
     const last = { opacity: [], z: [], caption: [] }
 
+    const depths = new Array(nodes.length).fill(0)
+    const order = nodes.map((_, i) => i)
     const place = () => {
       const { x: rx, y: ry } = rotationRef.current
       nodes.forEach((node, i) => {
@@ -218,16 +255,23 @@ export default function Home({ introDelay = 0 }) {
         if (!el) return
         const p = rotatePoint(node.base, rx, ry)
         const depth = (p.z + radius) / (radius * 2)
+        depths[i] = depth
         const scale = 0.76 + depth * 0.5
         el.style.transform = `translate3d(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px,0) translate(-50%,-50%) scale(${scale.toFixed(3)})`
-        const opacity = (0.10 + depth * 0.90).toFixed(2)
+        // Priehľadnosť v krokoch po 2 % – prehliadač nemusí prepisovať štýl pri každom snímku
+        const opacity = (Math.round((0.10 + depth * 0.90) * 50) / 50).toFixed(2)
         if (last.opacity[i] !== opacity) { el.style.opacity = opacity; last.opacity[i] = opacity }
-        const z = String(Math.round(depth * 1000))
-        if (last.z[i] !== z) { el.style.zIndex = z; last.z[i] = z }
         // Zadné (vyblednuté) priečinky nemajú popisok, aby guľa nebola preplnená
         const caption = depth > 0.45 ? 'visible' : 'hidden'
         const captionEl = captionElsRef.current[i]
         if (captionEl && last.caption[i] !== caption) { captionEl.style.visibility = caption; last.caption[i] = caption }
+      })
+      // Poradie vpredu/vzadu: z-index = poradie podľa hĺbky. Mení sa len pri pár priečinkoch,
+      // keď sa naozaj prekryjú inak – nie pri každom snímku pri všetkých (to brzdilo).
+      order.sort((a, b) => depths[a] - depths[b])
+      order.forEach((i, rank) => {
+        const el = nodeElsRef.current[i]
+        if (el && last.z[i] !== rank) { el.style.zIndex = String(rank + 1); last.z[i] = rank }
       })
     }
 
@@ -289,8 +333,8 @@ export default function Home({ introDelay = 0 }) {
       if (view === 'globe') {
         const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.h : 1
         rotateBy(-event.deltaY * unit * 0.00235, event.deltaX * unit * 0.00235, true)
-      } else if (listRef.current) {
-        listRef.current.scrollLeft += event.deltaX + event.deltaY
+      } else {
+        listMotionRef.current.pos += event.deltaX + event.deltaY
       }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
@@ -390,14 +434,16 @@ export default function Home({ introDelay = 0 }) {
             })}
           </div>
         ) : (
-          <section ref={listRef} className="no-scrollbar absolute left-0 right-0 top-1/2 z-[1200] -translate-y-1/2 overflow-x-auto overflow-y-hidden px-0 py-6 [touch-action:pan-x]">
-            <div className="flex w-max min-w-full items-center gap-4 px-4 md:gap-[27px] md:px-[30px]">
+          <section ref={listRef} className="absolute left-0 right-0 top-1/2 z-[1200] -translate-y-1/2 cursor-grab overflow-hidden px-0 py-6 [touch-action:none]"
+            onPointerDown={startListDrag} onPointerMove={moveListDrag} onPointerUp={endListDrag} onPointerCancel={endListDrag} onPointerLeave={endListDrag}
+            onClickCapture={(event) => { if (suppressClickRef.current) { event.preventDefault(); event.stopPropagation() } }}>
+            <div ref={listRowRef} className="flex w-max min-w-full items-center gap-4 px-4 will-change-transform md:gap-[27px] md:px-[30px]">
               {[...projects, ...projects, ...projects].map((project, index) => (
-                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`}
+                <Link key={`${project.slug}-${index}`} to={`/work/${project.slug}`} draggable="false"
                   onMouseEnter={() => { hoveringCardRef.current = true }}
                   onMouseLeave={() => { hoveringCardRef.current = false; lastInteractionRef.current = performance.now() }}
                   className="pink-hover group relative block h-[114px] w-[94px] shrink-0 md:h-[clamp(108px,7.6vw,150px)] md:w-[clamp(96px,6.5vw,132px)]">
-                  <ProjectImage project={project} alt={localized(project, language).title} className="h-full w-full transition group-hover:scale-[1.035]" imgClassName="object-cover" />
+                  <ProjectImage project={{ ...project, image: thumbFor(project.image) }} alt={localized(project, language).title} className="h-full w-full transition group-hover:scale-[1.035]" imgClassName="object-cover" />
                   <span className="absolute left-0 top-[calc(100%+7px)] whitespace-nowrap text-[8px] font-black uppercase opacity-0 transition-opacity group-hover:opacity-100" style={{ color: categoryById[project.group]?.color }}>{localized(project, language).title}</span>
                 </Link>
               ))}
