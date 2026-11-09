@@ -237,6 +237,50 @@ const realProjects = [
       ['styling-05.jpg', 2000, 1335], ['styling-06.jpg', 2000, 1335], ['styling-07.jpg', 1335, 2000], ['styling-08.jpg', 1335, 2000],
     ].map(([file, width, height]) => ({ src: `/projects/styling/${file}`, medium: `/projects/styling/1000/${file}`, width, height })),
   },
+  {
+    slug: 'in-my-pink-era',
+    title: 'IN MY PINK ERA',
+    group: 'fashion-design',
+    client: '—',
+    year: '2023',
+    category: 'FASHION DESIGN',
+    location: '—',
+    role: 'FASHION DESIGN, STYLING',
+    services: ['FASHION DESIGN', 'STYLING'],
+    description: '',
+    credits: [
+      ['Fashion design, styling', 'Viktória Kubincová'],
+      ['Photography, edit', 'Daniel Rázus'],
+      ['Models', 'Radka Dzurčaninová, Karin Sasaraková, Daniela Dančová, Tamara Vaxmanska, Sofia Konečná, Michaela Gočová, Dorota Juricová, Martin Bartko'],
+    ],
+    translations: {
+      sk: {
+        category: 'MÓDNY DIZAJN',
+        role: 'MÓDNY DIZAJN, STYLING',
+        services: ['MÓDNY DIZAJN', 'STYLING'],
+        description: '',
+        credits: [
+          ['Módny dizajn, styling', 'Viktória Kubincová'],
+          ['Fotografia, úprava', 'Daniel Rázus'],
+          ['Modelky a modeli', 'Radka Dzurčaninová, Karin Sasaraková, Daniela Dančová, Tamara Vaxmanska, Sofia Konečná, Michaela Gočová, Dorota Juricová, Martin Bartko'],
+        ],
+      },
+    },
+    image: '/projects/in-my-pink-era/in-my-pink-era-01.jpg',
+    // [súbor, šírka, výška]; `medium` (1000 px verzia) len pri fotkách väčších než 1000 px
+    gallery: [
+      ['in-my-pink-era-01.jpg', 2000, 1335], ['in-my-pink-era-02.jpg', 2000, 1335], ['in-my-pink-era-03.jpg', 1335, 2000],
+      ['in-my-pink-era-04.jpg', 1335, 2000], ['in-my-pink-era-05.jpg', 1335, 2000], ['in-my-pink-era-06.jpg', 2000, 1335],
+      ['in-my-pink-era-07.jpg', 1335, 2000], ['in-my-pink-era-08.jpg', 828, 1212], ['in-my-pink-era-09.jpg', 1335, 2000],
+      ['in-my-pink-era-10.jpg', 1335, 2000], ['in-my-pink-era-11.jpg', 828, 544], ['in-my-pink-era-12.jpg', 828, 1206],
+      ['in-my-pink-era-13.jpg', 1335, 2000], ['in-my-pink-era-14.jpg', 1335, 2000],
+    ].map(([file, width, height]) => ({
+      src: `/projects/in-my-pink-era/${file}`,
+      medium: Math.max(width, height) > 1000 ? `/projects/in-my-pink-era/1000/${file}` : undefined,
+      width,
+      height,
+    })),
+  },
 ]
 
 // PLACEHOLDERY — len pre kategórie, ktoré ešte nemajú reálny projekt.
