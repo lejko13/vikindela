@@ -237,6 +237,42 @@ const realProjects = [
     ].map(([file, width, height]) => ({ src: `/projects/fashion-show-promotion/${file}`, medium: `/projects/fashion-show-promotion/1000/${file}`, width, height })),
   },
   {
+    // Názov je zatiaľ dočasný – keď ho Viki vymyslí, stačí zmeniť `title` (aj v translations.sk). Adresa (slug) môže ostať.
+    slug: 'untitled-2024',
+    title: 'UNTITLED',
+    group: 'art-directing',
+    client: '—',
+    year: '2024',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'CONCEPT, ART DIRECTING, STYLING',
+    services: ['ART DIRECTING', 'CONCEPT', 'STYLING'],
+    description: '',
+    credits: [
+      ['Concept, art directing, styling', 'Viktória Kubincová'],
+      ['Photography, edit', 'Timotej Škrepták'],
+    ],
+    translations: {
+      sk: {
+        title: 'BEZ NÁZVU',
+        role: 'KONCEPT, ART DIRECTING, STYLING',
+        services: ['ART DIRECTING', 'KONCEPT', 'STYLING'],
+        description: '',
+        credits: [
+          ['Koncept, art directing, styling', 'Viktória Kubincová'],
+          ['Fotografia, úprava', 'Timotej Škrepták'],
+        ],
+      },
+    },
+    image: '/projects/untitled-2024/untitled-2024-01.jpg',
+    // [súbor, šírka, výška]; `medium` je 1000 px verzia (public/projects/untitled-2024/1000)
+    gallery: [
+      ['untitled-2024-01.jpg', 1555, 2000], ['untitled-2024-02.jpg', 1333, 2000], ['untitled-2024-03.jpg', 2000, 1333],
+      ['untitled-2024-04.jpg', 1333, 2000], ['untitled-2024-05.jpg', 1333, 2000], ['untitled-2024-06.jpg', 1333, 2000],
+      ['untitled-2024-07.jpg', 1333, 2000], ['untitled-2024-08.jpg', 1333, 2000],
+    ].map(([file, width, height]) => ({ src: `/projects/untitled-2024/${file}`, medium: `/projects/untitled-2024/1000/${file}`, width, height })),
+  },
+  {
     slug: 'styling-editorial',
     title: 'EDITORIAL',
     group: 'styling',
