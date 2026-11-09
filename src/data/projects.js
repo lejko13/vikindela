@@ -323,6 +323,45 @@ const realProjects = [
       height,
     })),
   },
+  {
+    slug: 'in-my-healing-era',
+    title: 'IN MY HEALING ERA',
+    group: 'fashion-design',
+    client: '—',
+    year: '2023',
+    category: 'FASHION DESIGN, ART DIRECTING',
+    location: '—',
+    role: 'GRAPHIC DESIGN, CONCEPT, ART DIRECTING, STYLING',
+    services: ['FASHION DESIGN', 'ART DIRECTING', 'GRAPHIC DESIGN', 'STYLING'],
+    description: 'Merch for the theatre play “And Yet I Long for Her” of my beloved friend Iris.',
+    credits: [
+      ['Graphic design for clothes, concept, art directing, styling', 'Viktória Kubincová'],
+      ['Photography, edit', 'Daniel Rázus'],
+      ['Models', 'Radka Dzurčaninová, Sofia Valkovičová, Alex Duleba, Viktória Kubincová'],
+    ],
+    translations: {
+      sk: {
+        category: 'MÓDNY DIZAJN, ART DIRECTING',
+        role: 'GRAFICKÝ DIZAJN, KONCEPT, ART DIRECTING, STYLING',
+        services: ['MÓDNY DIZAJN', 'ART DIRECTING', 'GRAFICKÝ DIZAJN', 'STYLING'],
+        description: 'Merch k divadelnej hre „A predsa po nej túžim“ mojej milovanej kamarátky Iris.',
+        credits: [
+          ['Grafický dizajn oblečenia, koncept, art directing, styling', 'Viktória Kubincová'],
+          ['Fotografia, úprava', 'Daniel Rázus'],
+          ['Modelky a modeli', 'Radka Dzurčaninová, Sofia Valkovičová, Alex Duleba, Viktória Kubincová'],
+        ],
+      },
+    },
+    image: '/projects/in-my-healing-era/in-my-healing-era-01.jpg',
+    // [súbor, šírka, výška]; `medium` je 1000 px verzia (public/projects/in-my-healing-era/1000)
+    gallery: [
+      ['in-my-healing-era-01.jpg', 2000, 1520], ['in-my-healing-era-02.jpg', 1333, 2000], ['in-my-healing-era-03.jpg', 2000, 1333],
+      ['in-my-healing-era-04.jpg', 2000, 1333], ['in-my-healing-era-05.jpg', 2000, 1333], ['in-my-healing-era-06.jpg', 1333, 2000],
+      ['in-my-healing-era-07.jpg', 2000, 1333], ['in-my-healing-era-08.jpg', 2000, 1333], ['in-my-healing-era-09.jpg', 2000, 1333],
+      ['in-my-healing-era-10.jpg', 2000, 1333], ['in-my-healing-era-11.jpg', 1333, 2000], ['in-my-healing-era-12.jpg', 1333, 2000],
+      ['in-my-healing-era-13.jpg', 1333, 2000], ['in-my-healing-era-14.jpg', 1333, 2000],
+    ].map(([file, width, height]) => ({ src: `/projects/in-my-healing-era/${file}`, medium: `/projects/in-my-healing-era/1000/${file}`, width, height })),
+  },
 ]
 
 // PLACEHOLDERY — len pre kategórie, ktoré ešte nemajú reálny projekt.
