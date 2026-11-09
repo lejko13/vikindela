@@ -9,7 +9,7 @@ export const siteContent = {
     nextProject: 'NEXT PROJECT', client: 'CLIENT', year: 'YEAR', type: 'TYPE', role: 'ROLE', location: 'LOCATION',
     detail: 'DETAIL', campaign: 'CAMPAIGN', loading: 'LOADING', clickHere: 'CLICK HERE', cookiesTitle: 'COOKIES',
     cookiesText: 'We use necessary cookies to remember your language and site preferences. Optional cookies can be enabled later.',
-    cookiesAccept: 'ACCEPT ALL', cookiesNecessary: 'NECESSARY ONLY', projects: 'PROJECTS', comingSoon: 'COMING SOON',
+    cookiesAccept: 'ACCEPT ALL', cookiesNecessary: 'NECESSARY ONLY', projects: 'PROJECTS', comingSoon: 'COMING SOON', upcomingProjects: 'UPCOMING PROJECTS',
   },
   sk: {
     introLine1: 'MÓDNY DIZAJNÉR', introLine2: 'A KREATÍVNY RIADITEĽ', menu: 'MENU', close: 'ZAVRIEŤ',
@@ -19,7 +19,7 @@ export const siteContent = {
     instagramLabel: 'INSTAGRAM', emailLabel: 'EMAIL', nextProject: 'ĎALŠÍ PROJEKT', client: 'KLIENT', year: 'ROK',
     type: 'TYP', role: 'ROLA', location: 'LOKALITA', detail: 'DETAIL', campaign: 'KAMPAŇ', loading: 'NAČÍTAVANIE', clickHere: 'KLIKNI SEM',
     cookiesTitle: 'COOKIES', cookiesText: 'Používame nevyhnutné cookies na zapamätanie jazyka a nastavení webu. Voliteľné cookies môžeš povoliť neskôr.',
-    cookiesAccept: 'PRIJAŤ VŠETKO', cookiesNecessary: 'LEN NEVYHNUTNÉ', projects: 'PROJEKTY', comingSoon: 'PRIPRAVUJEME',
+    cookiesAccept: 'PRIJAŤ VŠETKO', cookiesNecessary: 'LEN NEVYHNUTNÉ', projects: 'PROJEKTY', comingSoon: 'PRIPRAVUJEME', upcomingProjects: 'PRIPRAVOVANÉ PROJEKTY',
   },
 }
 
@@ -56,3 +56,10 @@ export const aboutData = {
     ],
   },
 }
+
+// Pripravované projekty – zoznam na konci stránky ALL. `slug` (voliteľné) = odkaz na existujúci projekt.
+export const upcomingProjects = [
+  { title: 'SLOVAKIA FUTURA', type: { en: 'ART DIRECTING', sk: 'ART DIRECTING' }, slug: 'slovakia-futura' },
+  { title: 'MON ALTER', type: { en: 'INSTALLATION', sk: 'INŠTALÁCIA' } },
+  { title: 'WHEN IS THE CONNECTION CONNECTED ENOUGH?', type: { en: 'INSTALLATION', sk: 'INŠTALÁCIA' } },
+]

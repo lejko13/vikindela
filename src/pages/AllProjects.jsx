@@ -4,6 +4,7 @@ import SiteHeader from '../components/SiteHeader'
 import ProjectImage from '../components/ProjectImage'
 import { projectCaption, projectCategories, projects, thumbFor } from '../data/projects'
 import { localized, useLanguage } from '../context/LanguageContext'
+import { upcomingProjects } from '../data/siteContent'
 
 export default function AllProjects() {
   const { language, t } = useLanguage()
@@ -52,6 +53,36 @@ export default function AllProjects() {
             </section>
           )
         })}
+
+        {/* Pripravované projekty – len zoznam názvov (texty v src/data/siteContent.js) */}
+        <section id="upcoming" className="scroll-mt-[63px] px-[14px] py-6 last:min-h-[calc(100svh-63px)] md:scroll-mt-[clamp(79px,calc(4.97vw+24px),113px)] md:min-h-[420px] md:last:min-h-[calc(100svh-clamp(79px,calc(4.97vw+24px),113px))] md:px-6 md:pt-[34px] md:pb-12">
+          <div className="mb-5 flex items-start justify-between gap-6 md:mb-[30px]">
+            <div className="flex items-start gap-2.5 md:gap-[18px]">
+              <span className="text-[8px] font-black md:text-[10px]">{String(projectCategories.length + 1).padStart(2, '0')}</span>
+              <h2 className="m-0 text-[clamp(32px,10vw,48px)] font-black uppercase leading-[.82] tracking-[-.065em] md:text-[clamp(40px,4.4vw,78px)]">{t.upcomingProjects}</h2>
+            </div>
+            <span className="text-[8px] font-black uppercase md:text-[10px]">{String(upcomingProjects.length).padStart(2, '0')} {t.projects}</span>
+          </div>
+          <ul className="m-0 list-none p-0">
+            {upcomingProjects.map((item, index) => {
+              const row = (
+                <>
+                  <span className="text-[8px] font-black md:text-[10px]">{String(index + 1).padStart(2, '0')}</span>
+                  <strong className="text-[clamp(20px,6vw,30px)] font-black uppercase leading-[.95] tracking-[-.05em] md:text-[clamp(22px,2.4vw,44px)]">{item.title}</strong>
+                  <span className="col-start-2 text-[8px] font-black uppercase opacity-65 md:col-start-auto md:text-right md:text-[10px]">{item.type[language] || item.type.en}</span>
+                </>
+              )
+              const cls = 'grid grid-cols-[20px_minmax(0,1fr)] items-baseline gap-x-1 gap-y-1 border-t border-current py-3 md:grid-cols-[28px_minmax(0,1fr)_160px] md:gap-x-[7px] md:py-4'
+              return (
+                <li key={item.title}>
+                  {item.slug
+                    ? <Link to={`/work/${item.slug}`} className={`${cls} transition-opacity hover:opacity-60`}>{row}</Link>
+                    : <div className={cls}>{row}</div>}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
       </div>
     </main>
   )
