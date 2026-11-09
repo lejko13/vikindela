@@ -288,6 +288,7 @@ const realProjects = [
     credits: [
       ['Fashion design, styling', 'Viktória Kubincová'],
       ['Photography, edit', 'Daniel Rázus'],
+      ['Photography', 'Timotej Škrepták'],
       ['Models', 'Radka Dzurčaninová, Karin Sasaraková, Daniela Dančová, Tamara Vaxmanska, Sofia Konečná, Michaela Gočová, Dorota Juricová, Martin Bartko'],
     ],
     translations: {
@@ -299,6 +300,7 @@ const realProjects = [
         credits: [
           ['Módny dizajn, styling', 'Viktória Kubincová'],
           ['Fotografia, úprava', 'Daniel Rázus'],
+          ['Fotografia', 'Timotej Škrepták'],
           ['Modelky a modeli', 'Radka Dzurčaninová, Karin Sasaraková, Daniela Dančová, Tamara Vaxmanska, Sofia Konečná, Michaela Gočová, Dorota Juricová, Martin Bartko'],
         ],
       },
@@ -311,6 +313,9 @@ const realProjects = [
       ['in-my-pink-era-07.jpg', 1335, 2000], ['in-my-pink-era-08.jpg', 828, 1212], ['in-my-pink-era-09.jpg', 1335, 2000],
       ['in-my-pink-era-10.jpg', 1335, 2000], ['in-my-pink-era-11.jpg', 828, 544], ['in-my-pink-era-12.jpg', 828, 1206],
       ['in-my-pink-era-13.jpg', 1335, 2000], ['in-my-pink-era-14.jpg', 1335, 2000],
+      ['in-my-pink-era-15.jpg', 1600, 2000], ['in-my-pink-era-16.jpg', 1600, 2000], ['in-my-pink-era-17.jpg', 1600, 2000],
+      ['in-my-pink-era-18.jpg', 1600, 2000], ['in-my-pink-era-19.jpg', 1600, 2000], ['in-my-pink-era-20.jpg', 1600, 2000],
+      ['in-my-pink-era-21.jpg', 2000, 1837], ['in-my-pink-era-22.jpg', 2000, 1333], ['in-my-pink-era-23.jpg', 1600, 2000],
     ].map(([file, width, height]) => ({
       src: `/projects/in-my-pink-era/${file}`,
       medium: Math.max(width, height) > 1000 ? `/projects/in-my-pink-era/1000/${file}` : undefined,
