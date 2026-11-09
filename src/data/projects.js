@@ -398,6 +398,50 @@ const realProjects = [
       ['in-my-healing-era-13.jpg', 1333, 2000], ['in-my-healing-era-14.jpg', 1333, 2000],
     ].map(([file, width, height]) => ({ src: `/projects/in-my-healing-era/${file}`, medium: `/projects/in-my-healing-era/1000/${file}`, width, height })),
   },
+  {
+    // Kolekcia k videu WHO AM I TO LOVE YOU (to je v Art Directing) – preto iná adresa (slug)
+    slug: 'who-am-i-to-love-you-collection',
+    title: 'WHO AM I TO LOVE YOU',
+    group: 'fashion-design',
+    client: '—',
+    year: '2024',
+    category: 'FASHION DESIGN',
+    location: '—',
+    role: 'FASHION DESIGN, STYLING, PROMOTION CONCEPT',
+    services: ['FASHION DESIGN', 'STYLING', 'CONCEPT'],
+    description: '',
+    credits: [
+      ['Fashion design, styling, promotion concept', 'Viktória Kubincová'],
+      ['Photography, edit', 'Daniel Rázus'],
+      ['Models', 'Ema Langová, Alex Mellif, Jakub Kuchár, Sofia Valkovičová, Radka Dzurčaninová, Karin Sasaraková, Jakub Mehaj, Sofia Konečná, Sofia Philippi'],
+    ],
+    translations: {
+      sk: {
+        category: 'MÓDNY DIZAJN',
+        role: 'MÓDNY DIZAJN, STYLING, KONCEPT PROPAGÁCIE',
+        services: ['MÓDNY DIZAJN', 'STYLING', 'KONCEPT'],
+        description: '',
+        credits: [
+          ['Módny dizajn, styling, koncept propagácie', 'Viktória Kubincová'],
+          ['Fotografia, úprava', 'Daniel Rázus'],
+          ['Modelky a modeli', 'Ema Langová, Alex Mellif, Jakub Kuchár, Sofia Valkovičová, Radka Dzurčaninová, Karin Sasaraková, Jakub Mehaj, Sofia Konečná, Sofia Philippi'],
+        ],
+      },
+    },
+    image: '/projects/who-am-i-to-love-you-collection/who-am-i-to-love-you-collection-01.jpg',
+    // [súbor, šírka, výška]; `medium` (1000 px verzia) len pri fotkách väčších než 1000 px
+    gallery: [
+      ['who-am-i-to-love-you-collection-01.jpg', 1001, 1500], ['who-am-i-to-love-you-collection-02.jpg', 1335, 2000], ['who-am-i-to-love-you-collection-03.jpg', 2000, 1335],
+      ['who-am-i-to-love-you-collection-04.jpg', 1500, 1001], ['who-am-i-to-love-you-collection-05.jpg', 2000, 1335], ['who-am-i-to-love-you-collection-06.jpg', 1001, 1500],
+      ['who-am-i-to-love-you-collection-07.jpg', 1001, 1500], ['who-am-i-to-love-you-collection-08.jpg', 2000, 1335], ['who-am-i-to-love-you-collection-09.jpg', 2000, 1335],
+      ['who-am-i-to-love-you-collection-10.jpg', 2000, 1335],
+    ].map(([file, width, height]) => ({
+      src: `/projects/who-am-i-to-love-you-collection/${file}`,
+      medium: Math.max(width, height) > 1000 ? `/projects/who-am-i-to-love-you-collection/1000/${file}` : undefined,
+      width,
+      height,
+    })),
+  },
 ]
 
 // PLACEHOLDERY — len pre kategórie, ktoré ešte nemajú reálny projekt.
