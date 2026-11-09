@@ -165,6 +165,41 @@ const realProjects = [
     ].map(([file, width, height]) => ({ src: `/projects/slovakia-futura/${file}`, medium: `/projects/slovakia-futura/1000/${file}`, width, height })),
   },
   {
+    slug: 'breathe',
+    title: 'BREATHE',
+    group: 'art-directing',
+    client: '—',
+    year: '2023',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'CONCEPT, ART DIRECTING, STYLING',
+    services: ['ART DIRECTING', 'CONCEPT', 'STYLING'],
+    description: '',
+    credits: [
+      ['Concept, art directing, styling', 'Viktória Kubincová'],
+      ['Photography', 'Timotej Škrepták'],
+      ['Model', 'Viktória Kubincová'],
+    ],
+    translations: {
+      sk: {
+        role: 'KONCEPT, ART DIRECTING, STYLING',
+        services: ['ART DIRECTING', 'KONCEPT', 'STYLING'],
+        description: '',
+        credits: [
+          ['Koncept, art directing, styling', 'Viktória Kubincová'],
+          ['Fotografia', 'Timotej Škrepták'],
+          ['Modelka', 'Viktória Kubincová'],
+        ],
+      },
+    },
+    image: '/projects/breathe/breathe-01.jpg',
+    // [súbor, šírka, výška]; `medium` je 1000 px verzia (public/projects/breathe/1000)
+    gallery: [
+      ['breathe-01.jpg', 2000, 1333], ['breathe-02.jpg', 2000, 1333], ['breathe-03.jpg', 1333, 2000],
+      ['breathe-04.jpg', 1333, 2000], ['breathe-05.jpg', 1333, 2000], ['breathe-06.jpg', 2000, 1333],
+    ].map(([file, width, height]) => ({ src: `/projects/breathe/${file}`, medium: `/projects/breathe/1000/${file}`, width, height })),
+  },
+  {
     slug: 'styling-editorial',
     title: 'EDITORIAL',
     group: 'styling',
