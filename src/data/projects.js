@@ -200,6 +200,43 @@ const realProjects = [
     ].map(([file, width, height]) => ({ src: `/projects/breathe/${file}`, medium: `/projects/breathe/1000/${file}`, width, height })),
   },
   {
+    slug: 'fashion-show-promotion',
+    title: 'FASHION SHOW PROMOTION PICTURES',
+    group: 'art-directing',
+    client: '—',
+    year: '2024',
+    category: 'ART DIRECTING',
+    location: '—',
+    role: 'CONCEPT, STYLING, ART DIRECTION',
+    services: ['ART DIRECTING', 'CONCEPT', 'STYLING'],
+    description: '',
+    credits: [
+      ['Concept, styling, art direction', 'Viktória Kubincová'],
+      ['Photography', 'Daniel Rázus'],
+      ['Models', 'Radka Dzurčaninová, Dorota Juricová, Michaela Gočová, Sofia Valkovičová, Karin Sasaráková'],
+    ],
+    translations: {
+      sk: {
+        title: 'PROPAGAČNÉ FOTKY K MÓDNEJ PREHLIADKE',
+        role: 'KONCEPT, STYLING, ART DIRECTION',
+        services: ['ART DIRECTING', 'KONCEPT', 'STYLING'],
+        description: '',
+        credits: [
+          ['Koncept, styling, art direction', 'Viktória Kubincová'],
+          ['Fotografia', 'Daniel Rázus'],
+          ['Modelky', 'Radka Dzurčaninová, Dorota Juricová, Michaela Gočová, Sofia Valkovičová, Karin Sasaráková'],
+        ],
+      },
+    },
+    image: '/projects/fashion-show-promotion/fashion-show-promotion-01.jpg',
+    // [súbor, šírka, výška]; `medium` je 1000 px verzia (public/projects/fashion-show-promotion/1000)
+    gallery: [
+      ['fashion-show-promotion-01.jpg', 2000, 1335], ['fashion-show-promotion-02.jpg', 1335, 2000], ['fashion-show-promotion-03.jpg', 1600, 2000],
+      ['fashion-show-promotion-04.jpg', 1600, 2000], ['fashion-show-promotion-05.jpg', 2000, 1335], ['fashion-show-promotion-06.jpg', 1600, 2000],
+      ['fashion-show-promotion-07.jpg', 2000, 1335], ['fashion-show-promotion-08.jpg', 1164, 2000], ['fashion-show-promotion-09.jpg', 2000, 1335],
+    ].map(([file, width, height]) => ({ src: `/projects/fashion-show-promotion/${file}`, medium: `/projects/fashion-show-promotion/1000/${file}`, width, height })),
+  },
+  {
     slug: 'styling-editorial',
     title: 'EDITORIAL',
     group: 'styling',
